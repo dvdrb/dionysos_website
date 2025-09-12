@@ -119,19 +119,11 @@ export default function DionysosPage() {
           {/* Locations Row */}
           <div className="relative mt-20 grid w-full items-center max-w-3xl h-full grid-cols-2 gap-6">
             {/* Left column */}
-            <LocationCard
-              label="Centru"
-              phone="0247928435"
-              hrefMenu="#menu-centru"
-            />
+            <LocationCard label="Centru" phone="0247928435" hrefMenu="/menu" />
             {/* Divider (thin vertical line between columns for md+) */}
             <div className="pointer-events-none absolute left-1/2 top-1/2  h-full -translate-x-1/2 -translate-y-1/2 border-l border-white/50 " />
             {/* Right column */}
-            <LocationCard
-              label="Centru"
-              phone="0247928435"
-              hrefMenu="#menu-centru"
-            />
+            <LocationCard label="Centru" phone="0247928435" hrefMenu="/menu" />
           </div>
         </div>
       </section>

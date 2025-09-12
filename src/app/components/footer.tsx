@@ -2,12 +2,12 @@ import { MapPin, Phone } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-white py-8 md:py-20 px-4 md:px-8">
+    <footer className="bg-black border-gray-300 border-t text-white py-8 md:py-20 px-4 md:px-8">
       <div className="max-w-4xl md:max-w-6xl justify-self-center mx-auto">
         {/* Header */}
         <div className="mb-8 md:mb-16">
-          <h2 className="text-xl md:text-5xl font-light">
-            Contacte <span className="font-normal">DIONYSOS</span>
+          <h2 className="text-xl text-center md:text-5xl font-light">
+            Contacte <span className="font-normal ">DIONYSOS</span>
           </h2>
         </div>
 
