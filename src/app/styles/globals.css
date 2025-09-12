@@ -1,0 +1,75 @@
+@import "tailwindcss";
+/* Import Swiper's CSS correctly so PostCSS can resolve it */
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/pagination";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  /* Swiper theme colors (for visible arrows/bullets on dark bg) */
+  --swiper-navigation-color: #ffffff;
+  --swiper-pagination-color: #ffffff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  /* Use Inter (provided by next/font) as the sans font */
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --swiper-navigation-color: #ffffff;
+    --swiper-pagination-color: #ffffff;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Hide all Swiper pagination bullets globally */
+.swiper-pagination {
+  display: none !important;
+}
+
+/* Make the active slide centered and larger while neighbors appear half-size */
+.menu-swiper .swiper-slide {
+  transition: transform 320ms ease, opacity 320ms ease;
+  transform-origin: center center;
+  will-change: transform;
+  z-index: 1;
+}
+.menu-swiper .swiper-slide-active {
+  transform: scale(1);
+  opacity: 1;
+  z-index: 3;
+}
+.menu-swiper .swiper-slide-prev,
+.menu-swiper .swiper-slide-next {
+  transform: scale(0.96);
+  opacity: 0.9;
+  z-index: 2;
+}
+.menu-swiper .swiper-slide:not(.swiper-slide-active):not(.swiper-slide-prev):not(.swiper-slide-next) {
+  transform: scale(0.9);
+  opacity: 0.75;
+}
+
+/* Ensure Swiper controls are positioned nicely */
+.menu-swiper .swiper-button-prev,
+.menu-swiper .swiper-button-next {
+  top: 46%;
+}
+
+/* Keep swiper container tight; centering handled by Swiper */
+.menu-swiper {
+  padding-left: 0;
+  padding-right: 0;
+}
