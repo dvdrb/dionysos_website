@@ -4,13 +4,12 @@ import { supabase } from "@/lib/supabaseClient";
 import MenuClient, { SectionType } from "./MenuClient";
 
 // Această funcție va rula pe server
-async function getMenuData() {
+async function getMenuData(locale: string) {
   const { data, error } = await supabase
     .from("categories")
     .select(
       `
-      id,
-      name,
+      *,
       menu_images (
         id,
         image_url,
@@ -27,23 +26,28 @@ async function getMenuData() {
 
   // Transformă datele în formatul așteptat de componenta client
   const sections: SectionType[] = data
-    .map((category) => ({
-      id: category.name.toLowerCase().replace(/\s+/g, "-"), // ex: 'Supe Ciorbe' -> 'supe-ciorbe'
-      name: category.name,
-      items: category.menu_images.map((img) => ({
-        id: img.id,
-        image_url: img.image_url,
-        alt_text: img.alt_text,
-      })),
-    }))
+    .map((category: any) => {
+      const displayName = category[`name_${locale}`] || category.name;
+      const slug = String(displayName).toLowerCase().replace(/\s+/g, "-");
+      return {
+        id: slug,
+        name: displayName,
+        items: (category.menu_images || []).map((img: any) => ({
+          id: img.id,
+          image_url: img.image_url,
+          alt_text: img.alt_text,
+        })),
+      } as SectionType;
+    })
     .filter((category) => category.items.length > 0); // Afișează doar categoriile cu imagini
 
   return sections;
 }
 
 // Componenta paginii
-export default async function MenuPage() {
-  const sections = await getMenuData();
+export default async function MenuPage({ params }: { params: { locale: string } }) {
+  const locale = params?.locale || "ro";
+  const sections = await getMenuData(locale);
 
   return <MenuClient sections={sections} />;
 }

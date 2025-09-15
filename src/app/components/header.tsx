@@ -5,7 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useLocale } from "next-intl";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import * as Icons from "lucide-react";
 import {
   X,
   Coffee,
@@ -23,29 +24,24 @@ import {
   Wine,
 } from "lucide-react";
 
+type SideMenuItem = {
+  name: string;
+  href: string;
+  Icon: React.ComponentType<{ className?: string }>;
+};
+
 type MobileSidePanelProps = {
   isOpen: boolean;
   onClose: () => void;
   locale: string;
+  items: SideMenuItem[];
 };
-const MobileSidePanel = ({ isOpen, onClose, locale }: MobileSidePanelProps) => {
-  const menuItems = [
-    { name: "Sushi", icon: Coffee, href: `/${locale}/menu#sushi` },
-    { name: "Dejun", icon: Coffee, href: `/${locale}/menu#dejun` },
-    { name: "Felul întâi", icon: Soup, href: `/${locale}/menu#felul-intai` },
-    { name: "Salate", icon: Salad, href: `/${locale}/menu#salate` },
-    { name: "Paste", icon: Cookie, href: `/${locale}/menu#paste` },
-    { name: "Colțunași", icon: Mountain, href: `/${locale}/menu#coltunasi` },
-    { name: "Pizza", icon: Pizza, href: `/${locale}/menu#pizza` },
-    { name: "Kebab", icon: Beef, href: `/${locale}/menu#kebab` },
-    { name: "Burger", icon: Sandwich, href: `/${locale}/menu#burger` },
-    { name: "Platouri", icon: ChefHat, href: `/${locale}/menu#platouri` },
-    { name: "Gustări", icon: IceCream, href: `/${locale}/menu#gustari` },
-    { name: "Deserturi", icon: Cake, href: `/${locale}/menu#deserturi` },
-    { name: "Oferte", icon: Star, href: `/${locale}/menu#oferte` },
-    { name: "Bar", icon: Wine, href: `/${locale}/menu#bar` },
-  ];
-
+const MobileSidePanel = ({
+  isOpen,
+  onClose,
+  locale,
+  items,
+}: MobileSidePanelProps) => {
   return (
     <>
       {/* Overlay */}
@@ -76,8 +72,8 @@ const MobileSidePanel = ({ isOpen, onClose, locale }: MobileSidePanelProps) => {
         {/* Menu Items */}
         <div className="overflow-y-auto  items-center flex flex-col h-full pb-20">
           <nav className="py-4 w-fit  ">
-            {menuItems.map((item, index) => {
-              const IconComponent = item.icon;
+            {items.map((item, index) => {
+              const IconComponent = item.Icon;
               return (
                 <div key={index}>
                   <Link
@@ -88,7 +84,7 @@ const MobileSidePanel = ({ isOpen, onClose, locale }: MobileSidePanelProps) => {
                     <IconComponent className="w-6 h-6 text-gray-600" />
                     <span className="text-lg font-medium">{item.name}</span>
                   </Link>
-                  {index < menuItems.length - 1 && (
+                  {index < items.length - 1 && (
                     <div className="mx-6 border-b border-gray-200" />
                   )}
                 </div>
@@ -105,6 +101,11 @@ const Header = () => {
   const locale = useLocale();
   const pathname = usePathname();
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
+  const [cats, setCats] = useState<
+    Array<{ id: number; name: string; icon: string | null; href: string }>
+  >([]);
+  const [loadingCats, setLoadingCats] = useState(false);
+  const [catsError, setCatsError] = useState<string | null>(null);
 
   const switchTo = (target: string) => {
     const path = pathname || "/";
@@ -118,6 +119,51 @@ const Header = () => {
   const toggleSidePanel = () => {
     setIsSidePanelOpen(!isSidePanelOpen);
   };
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      setLoadingCats(true);
+      setCatsError(null);
+      try {
+        const res = await fetch(`/api/categories?locale=${locale}`);
+        if (!res.ok)
+          throw new Error(`Failed to fetch categories (${res.status})`);
+        const j = await res.json();
+        if (!cancelled) setCats(j.items || []);
+      } catch (e: any) {
+        if (!cancelled)
+          setCatsError(e?.message || "Nu s-au putut încărca categoriile");
+      } finally {
+        if (!cancelled) setLoadingCats(false);
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [locale]);
+
+  function pickIconComponent(iconName: string | null | undefined) {
+    const fallback = Icons.ChefHat;
+    if (!iconName || iconName === "Icon") return fallback;
+    // Try exact match first (e.g., "Pizza")
+    // Then try capitalizing (e.g., "pizza" -> "Pizza")
+    const exact = (Icons as any)[iconName];
+    if (exact) return exact;
+    const cap = iconName.charAt(0).toUpperCase() + iconName.slice(1);
+    const guessed = (Icons as any)[cap];
+    return guessed || fallback;
+  }
+
+  const sideMenuItems: SideMenuItem[] = useMemo(() => {
+    if (loadingCats || catsError) return [];
+    return cats.map((c) => ({
+      name: c.name,
+      href: c.href,
+      Icon: pickIconComponent(c.icon),
+    }));
+  }, [cats, loadingCats, catsError, locale]);
 
   return (
     <>
@@ -140,7 +186,7 @@ const Header = () => {
 
           {/* Desktop Menu Button */}
           <label
-            htmlFor="menu-toggle"
+            onClick={toggleSidePanel}
             className="hidden md:flex flex-col gap-1 p-2 cursor-pointer"
             aria-label="Toggle menu"
           >
@@ -193,77 +239,6 @@ const Header = () => {
             </div>
           </div>
         </div>
-
-        {/* Desktop Menu Overlay - Hidden by default, shown when checkbox is checked */}
-        <div className="fixed inset-0 bg-black bg-opacity-95 z-50 hidden peer-checked:flex flex-col">
-          {/* Close Button */}
-          <div className="flex justify-end p-4 md:p-8">
-            <label
-              htmlFor="menu-toggle"
-              className="p-2 cursor-pointer"
-              aria-label="Close menu"
-            >
-              <svg
-                className="w-6 h-6 md:w-8 md:h-8"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </label>
-          </div>
-
-          {/* Menu Content */}
-          <nav className="flex-1 flex flex-col items-center justify-center">
-            <ul className="space-y-8 text-center">
-              <li>
-                <Link
-                  href={`/${locale}/about`}
-                  className="text-2xl md:text-4xl font-light hover:text-red-600 block py-2"
-                >
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`/${locale}/services`}
-                  className="text-2xl md:text-4xl font-light hover:text-red-600 block py-2"
-                >
-                  Services
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`/${locale}/portfolio`}
-                  className="text-2xl md:text-4xl font-light hover:text-red-600 block py-2"
-                >
-                  Portfolio
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`/${locale}/contact`}
-                  className="text-2xl md:text-4xl font-light hover:text-red-600 block py-2"
-                >
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </nav>
-
-          {/* Footer in Menu */}
-          <div className="p-8 text-center">
-            <p className="text-sm text-gray-400">
-              © 2024 Dionysos Capital. All rights reserved.
-            </p>
-          </div>
-        </div>
       </header>
 
       {/* Mobile Side Panel */}
@@ -271,6 +246,7 @@ const Header = () => {
         isOpen={isSidePanelOpen}
         onClose={() => setIsSidePanelOpen(false)}
         locale={locale}
+        items={sideMenuItems}
       />
     </>
   );

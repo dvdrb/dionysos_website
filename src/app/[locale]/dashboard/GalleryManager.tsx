@@ -21,7 +21,7 @@ export default function GalleryManager({
 }: {
   initialGalleryImages: GalleryImage[];
 }) {
-  const [images, setImages] = useState(initialGalleryImages);
+  const [images, setImages] = useState(initialGalleryImages ?? []);
   const [uploading, setUploading] = useState(false);
   const router = useRouter();
 

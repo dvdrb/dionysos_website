@@ -24,7 +24,7 @@ export default function MenuImagesManager({
   initialMenuImages: MenuImage[];
   categories: Category[];
 }) {
-  const [images, setImages] = useState(initialMenuImages);
+  const [images, setImages] = useState(initialMenuImages ?? []);
   const [selectedCategory, setSelectedCategory] = useState<string>(
     categories[0]?.id.toString() ?? ""
   );
@@ -79,11 +79,11 @@ export default function MenuImagesManager({
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="mt-1 block w-full rounded-md border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
           >
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {(cat as any).name_ro || cat.name}
+            </option>
+          ))}
           </select>
         </div>
         <div className="col-span-1">

@@ -10,7 +10,13 @@ import PromoItemsManager from "./PromoItemsManager";
 import MenuImagesManager from "./MenuImagesManager";
 
 // Tipuri pentru datele primite
-export type Category = { id: number; name: string; icon: string | null };
+export type Category = {
+  id: number;
+  name: string;
+  icon: string | null;
+  name_ro?: string | null;
+  name_ru?: string | null;
+};
 export type GalleryImage = {
   id: number;
   image_url: string;
@@ -57,8 +63,14 @@ function LogoutButton() {
 export default function DashboardClient({
   initialData,
 }: {
-  initialData: InitialData;
+  initialData: InitialData | undefined | null;
 }) {
+  const safeData: InitialData = {
+    categories: initialData?.categories ?? [],
+    galleryImages: initialData?.galleryImages ?? [],
+    promoItems: initialData?.promoItems ?? [],
+    menuImages: initialData?.menuImages ?? [],
+  };
   const [activeTab, setActiveTab] = useState("categories");
 
   const tabs = [
@@ -72,7 +84,9 @@ export default function DashboardClient({
     <div className="min-h-screen bg-gray-50 text-gray-800">
       <header className="sticky top-0 z-30 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Admin Dashboard</h1>
+          <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
+            Admin Dashboard
+          </h1>
           <LogoutButton />
         </div>
         <div className="w-full overflow-x-auto">
@@ -105,27 +119,43 @@ export default function DashboardClient({
       </header>
 
       <main className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
-        <div id="panel-categories" role="tabpanel" hidden={activeTab !== "categories"}>
+        <div
+          id="panel-categories"
+          role="tabpanel"
+          hidden={activeTab !== "categories"}
+        >
           {activeTab === "categories" && (
-            <CategoriesManager initialCategories={initialData.categories} />
+            <CategoriesManager initialCategories={safeData?.categories} />
           )}
         </div>
-        <div id="panel-menu_images" role="tabpanel" hidden={activeTab !== "menu_images"}>
+        <div
+          id="panel-menu_images"
+          role="tabpanel"
+          hidden={activeTab !== "menu_images"}
+        >
           {activeTab === "menu_images" && (
             <MenuImagesManager
-              initialMenuImages={initialData.menuImages}
-              categories={initialData.categories}
+              initialMenuImages={safeData?.menuImages}
+              categories={safeData?.categories}
             />
           )}
         </div>
-        <div id="panel-promo_items" role="tabpanel" hidden={activeTab !== "promo_items"}>
+        <div
+          id="panel-promo_items"
+          role="tabpanel"
+          hidden={activeTab !== "promo_items"}
+        >
           {activeTab === "promo_items" && (
-            <PromoItemsManager initialPromoItems={initialData.promoItems} />
+            <PromoItemsManager initialPromoItems={safeData?.promoItems} />
           )}
         </div>
-        <div id="panel-gallery" role="tabpanel" hidden={activeTab !== "gallery"}>
+        <div
+          id="panel-gallery"
+          role="tabpanel"
+          hidden={activeTab !== "gallery"}
+        >
           {activeTab === "gallery" && (
-            <GalleryManager initialGalleryImages={initialData.galleryImages} />
+            <GalleryManager initialGalleryImages={safeData?.galleryImages} />
           )}
         </div>
       </main>

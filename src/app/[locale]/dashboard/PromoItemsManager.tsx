@@ -22,7 +22,7 @@ export default function PromoItemsManager({
 }: {
   initialPromoItems: PromoItem[];
 }) {
-  const [items, setItems] = useState(initialPromoItems);
+  const [items, setItems] = useState(initialPromoItems ?? []);
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [file, setFile] = useState<File | null>(null);
