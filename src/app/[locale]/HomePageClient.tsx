@@ -159,19 +159,51 @@ export default function HomePageClient({
             height={50}
             className="object-cover"
           />
-          <div className="relative mt-20 grid w-full items-center max-w-3xl h-full grid-cols-2 gap-6">
-            <LocationCard
-              label={t("location.varzaresti")}
-              phone="069993755"
-              onMenuClick={openModal}
-            />
-            <div className="pointer-events-none absolute left-1/2 top-1/2 h-full -translate-x-1/2 -translate-y-1/2 border-l border-white/50" />
-            <LocationCard
-              label={t("location.nisporeni")}
-              phone="068118111"
-              onMenuClick={openModal}
-            />
-          </div>
+          {showModal && (
+            <div>
+              {/* Backdrop */}
+              <div onClick={closeModal} />
+
+              {/* Modal Content */}
+              <div className="relative z-10 w-full max-w-md mt-7">
+                {/* Menu Categories */}
+                <div className="space-y-4">
+                  <MenuCategoryButton
+                    icon={barIcon}
+                    label={t("modal.bar")}
+                    href={`/${locale}/menu/bar`}
+                  />
+
+                  <MenuCategoryButton
+                    icon={tavernaIcon}
+                    label={t("modal.taverna")}
+                    href={`/${locale}/menu/taverna`}
+                  />
+
+                  <MenuCategoryButton
+                    icon={sushiIcon}
+                    label={t("modal.sushi")}
+                    href={`/${locale}/menu/sushi`}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+          {!showModal && (
+            <div className="relative mt-20 grid w-full items-center max-w-3xl h-full grid-cols-2 gap-6">
+              <LocationCard
+                label={t("location.varzaresti")}
+                phone="069993755"
+                onMenuClick={openModal}
+              />
+              <div className="pointer-events-none absolute left-1/2 top-1/2 h-full -translate-x-1/2 -translate-y-1/2 border-l border-white/50" />
+              <LocationCard
+                label={t("location.nisporeni")}
+                phone="068118111"
+                onMenuClick={openModal}
+              />
+            </div>
+          )}
         </div>
       </section>
 
@@ -284,55 +316,6 @@ export default function HomePageClient({
       </section>
 
       {/* Modal pentru categorii meniu */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-            onClick={closeModal}
-          />
-
-          {/* Modal Content */}
-          <div className="relative z-10 w-full max-w-md mx-4">
-            <div className="bg-gray-900/95 backdrop-blur-md rounded-2xl border border-white/10 p-6">
-              {/* Header */}
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-light text-white">
-                  {t("location.nisporeni")}
-                </h2>
-                <button
-                  onClick={closeModal}
-                  className="text-gray-400 hover:text-white transition-colors"
-                  aria-label="Închide"
-                >
-                  <CloseIcon />
-                </button>
-              </div>
-
-              {/* Menu Categories */}
-              <div className="space-y-4">
-                <MenuCategoryButton
-                  icon={barIcon}
-                  label={t("modal.bar")}
-                  href={`/${locale}/menu/bar`}
-                />
-
-                <MenuCategoryButton
-                  icon={tavernaIcon}
-                  label={t("modal.taverna")}
-                  href={`/${locale}/menu/taverna`}
-                />
-
-                <MenuCategoryButton
-                  icon={sushiIcon}
-                  label={t("modal.sushi")}
-                  href={`/${locale}/menu/sushi`}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
