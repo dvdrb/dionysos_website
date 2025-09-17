@@ -34,6 +34,19 @@ body {
   color: var(--foreground);
 }
 
+/* Make all phone numbers (tel: links) look clickable */
+a[href^="tel:"] {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  text-decoration-thickness: 1px;
+  cursor: pointer;
+}
+
+a[href^="tel:"]:active {
+  text-decoration-color: currentColor;
+  filter: brightness(0.95);
+}
+
 /* Hide all Swiper pagination bullets globally */
 .swiper-pagination {
   display: none !important;
@@ -57,7 +70,10 @@ body {
   opacity: 0.9;
   z-index: 2;
 }
-.menu-swiper .swiper-slide:not(.swiper-slide-active):not(.swiper-slide-prev):not(.swiper-slide-next) {
+.menu-swiper
+  .swiper-slide:not(.swiper-slide-active):not(.swiper-slide-prev):not(
+    .swiper-slide-next
+  ) {
   transform: scale(0.9);
   opacity: 0.75;
 }

@@ -71,10 +71,10 @@ async function getMenuData(locale: string, menu: string) {
 export default async function MenuPage({
   params,
 }: {
-  params: { locale: string; menu: string };
+  params: Promise<{ locale: string; menu: string }>;
 }) {
-  const locale = params?.locale || "ro";
-  const menu = (params?.menu || "classic") as string;
+  const { locale = "ro", menu: rawMenu = "taverna" } = await params;
+  const menu = rawMenu as string;
   const sections = await getMenuData(locale, menu);
   return <MenuClient sections={sections} />;
 }
@@ -82,10 +82,10 @@ export default async function MenuPage({
 export async function generateMetadata({
   params,
 }: {
-  params: { locale: string; menu: string };
+  params: Promise<{ locale: string; menu: string }>;
 }): Promise<Metadata> {
-  const locale = params?.locale || "ro";
-  const menu = (params?.menu || "classic") as string;
+  const { locale = "ro", menu: rawMenu = "taverna" } = await params;
+  const menu = rawMenu as string;
   const menuNames: Record<string, { ro: string; ru: string }> = {
     taverna: { ro: "Meniu Taverna", ru: "Меню таверны" },
     bar: { ro: "Bar", ru: "Бар" },

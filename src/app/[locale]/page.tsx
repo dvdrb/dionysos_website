@@ -41,12 +41,12 @@ export default async function DionysosPage() {
 export async function generateMetadata({
   params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const locale = params?.locale || "ro";
+  const { locale = "ro" } = await params;
   const titles: Record<string, string> = {
-    ro: "Dionysos – Restaurant în centrul orașului",
-    ru: "Dionysos – Ресторан в центре города",
+    ro: "Dionysos – Restaurant în orașul Nisporeni",
+    ru: "Dionysos – Ресторан в городе Ниспорены",
   };
   const descriptions: Record<string, string> = {
     ro: "Preparate proaspete, atmosferă primitoare. Vezi meniul și galeria restaurantului Dionysos.",

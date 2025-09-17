@@ -9,9 +9,10 @@ export function generateStaticParams() {
 import { setRequestLocale } from "next-intl/server";
 import Footer from "../components/footer";
 
-export default async function LocaleLayout(props: any) {
+export default async function LocaleLayout(props: { children: React.ReactNode; params: Promise<{ locale?: string }> }) {
   const { children, params } = props;
-  const locale = await String(params?.locale ?? "ro");
+  const { locale: rawLocale } = await params;
+  const locale = String(rawLocale ?? "ro");
 
   const { messages } = await getMessages(locale);
 

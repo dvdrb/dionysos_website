@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     template: "%s | Dionysos Restaurant",
   },
   description:
-    "Dionysos – restaurant cu specific, preparate proaspete și atmosferă primitoare. Vezi meniul și galeria noastră.",
+    "Dionysos – restaurant eurpoean, preparate proaspete și atmosferă primitoare. Vezi meniul și galeria noastră.",
   applicationName: "Dionysos",
   robots: {
     index: true,
