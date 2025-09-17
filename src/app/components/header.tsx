@@ -212,25 +212,6 @@ const Header = () => {
             <span className="block w-8 h-0.5 bg-white"></span>
           </label>
 
-          {/* Desktop Menu Types */}
-          <nav className="hidden md:flex items-center gap-5 ml-3">
-            {menuTypes.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="inline-flex items-center gap-2 text-sm text-gray-200 hover:text-white"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                {item.imgSrc ? (
-                  <img src={item.imgSrc} alt={item.name} className="w-5 h-5" />
-                ) : item.Icon ? (
-                  <item.Icon className="w-5 h-5" />
-                ) : null}
-                <span>{item.name}</span>
-              </Link>
-            ))}
-          </nav>
-
           {/* Logo */}
           <div className="absolute left-1/2 transform -translate-x-1/2">
             <Link
