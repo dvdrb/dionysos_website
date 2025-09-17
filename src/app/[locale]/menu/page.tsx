@@ -2,6 +2,7 @@
 
 import { supabase } from "@/lib/supabaseClient";
 import MenuClient, { SectionType } from "./MenuClient";
+import type { Metadata } from "next";
 
 // Această funcție va rula pe server
 async function getMenuData(locale: string) {
@@ -50,4 +51,35 @@ export default async function MenuPage({ params }: { params: { locale: string } 
   const sections = await getMenuData(locale);
 
   return <MenuClient sections={sections} />;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
+  const locale = params?.locale || "ro";
+  const title =
+    locale === "ru" ? "Меню ресторана Dionysos" : "Meniul restaurantului Dionysos";
+  const description =
+    locale === "ru"
+      ? "Ознакомьтесь с меню Dionysos: свежие блюда и сезонные предложения."
+      : "Descoperă meniul Dionysos: preparate proaspete și oferte de sezon.";
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `/${locale}/menu`,
+      languages: {
+        ro: "/ro/menu",
+        ru: "/ru/menu",
+      },
+    },
+    openGraph: {
+      title,
+      description,
+      url: `/${locale}/menu`,
+      locale,
+    },
+  };
 }

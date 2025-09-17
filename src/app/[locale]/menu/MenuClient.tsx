@@ -3,6 +3,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Script from "next/script";
+import { useLocale } from "next-intl";
 
 // --- TIPURI ---
 // Aceste tipuri trebuie să corespundă cu datele pe care le vom primi
@@ -27,13 +29,18 @@ type CategoryNavProps = {
   categories: NavCategory[];
   activeCategory: string;
   onCategoryClick: (categoryId: string) => void;
+  headerOffset: number;
 };
 const CategoryNav = ({
   categories,
   activeCategory,
   onCategoryClick,
+  headerOffset,
 }: CategoryNavProps) => (
-  <div className="bg-black/80 backdrop-blur-sm sticky top-0 z-20 py-3">
+  <div
+    className="bg-black/80 backdrop-blur-sm sticky z-30 py-3"
+    style={{ top: headerOffset }}
+  >
     <div className="container mx-auto px-4">
       <nav className="flex items-center gap-4 overflow-x-auto pb-2">
         {categories.map((category) => (
@@ -76,6 +83,7 @@ const MenuSection = ({ id, items }: MenuSectionProps) => (
 
 // --- COMPONENTA PRINCIPALĂ CLIENT ---
 export default function MenuClient({ sections }: { sections: SectionType[] }) {
+  const locale = useLocale();
   const navCategories: NavCategory[] = sections.map(({ id, name }) => ({
     id,
     name,
@@ -83,6 +91,29 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
   const [activeCategory, setActiveCategory] = useState<string>(
     navCategories[0]?.id ?? ""
   );
+  const [headerOffset, setHeaderOffset] = useState<number>(0);
+
+  // Compute header height to stick nav right under it
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const header = document.querySelector("header");
+    const update = () => {
+      const h = header instanceof HTMLElement ? header.offsetHeight : 0;
+      setHeaderOffset(h);
+    };
+    update();
+    // Observe header size changes
+    let ro: ResizeObserver | null = null;
+    if (header instanceof HTMLElement && "ResizeObserver" in window) {
+      ro = new ResizeObserver(update);
+      ro.observe(header);
+    }
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("resize", update);
+      if (ro && header instanceof HTMLElement) ro.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -127,12 +158,43 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
     );
   }
 
+  const origin =
+    typeof window !== "undefined"
+      ? window.location.origin
+      : process.env.NEXT_PUBLIC_SITE_URL || "";
+  const menuUrl = `${origin}/${locale}/menu`;
+  const ld = JSON.stringify([
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: `${origin}/${locale}` },
+        { '@type': 'ListItem', position: 2, name: 'Menu', item: menuUrl },
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Menu',
+      name: 'Dionysos Menu',
+      hasMenuSection: sections.map((s) => ({
+        '@type': 'MenuSection',
+        name: s.name,
+        url: `${menuUrl}#${s.id}`,
+      })),
+    },
+  ]);
+
   return (
     <div className="bg-[#1a1a1a] min-h-screen font-sans">
+      {/* JSON-LD: Breadcrumbs + Menu schema */}
+      <Script id="ld-menu" type="application/ld+json">
+        {ld}
+      </Script>
       <CategoryNav
         categories={navCategories}
         activeCategory={activeCategory}
         onCategoryClick={handleCategoryClick}
+        headerOffset={headerOffset}
       />
 
       <main>

@@ -182,8 +182,8 @@ const Header = () => {
 
           {/* Logo */}
           <div className="absolute left-1/2 transform -translate-x-1/2">
-            <a
-              href="/"
+            <Link
+              href={`/${locale}`}
               className="text-xl md:text-2xl font-light tracking-widest text-center"
             >
               <Image
@@ -193,7 +193,7 @@ const Header = () => {
                 height={32}
                 priority
               />
-            </a>
+            </Link>
           </div>
 
           {/* Language Selector */}

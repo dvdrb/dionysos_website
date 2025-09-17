@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Script from "next/script";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import { useEffect, useRef } from "react";
@@ -74,6 +75,19 @@ export default function HomePageClient({
 
   return (
     <div className="bg-black text-white pt-13">
+      {/* JSON-LD: Organization/Restaurant for rich results */}
+      <Script id="ld-restaurant" type="application/ld+json">
+        {JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Restaurant',
+          name: 'Dionysos',
+          url: typeof window !== 'undefined' ? window.location.origin : undefined,
+          image: '/dionysos_logo.png',
+          telephone: '0247928435',
+          servesCuisine: ['Greek', 'Mediterranean', 'European'],
+          acceptsReservations: true,
+        })}
+      </Script>
       {/* HERO (Rămâne la fel) */}
       <section className="relative h-[86svh] min-h-[640px] w-full overflow-hidden">
         <Image
@@ -141,11 +155,12 @@ export default function HomePageClient({
           >
             {galleryImgs.map((img) => (
               <SwiperSlide key={img.id} className="!h-auto">
-                <div className="relative aspect-[16/9] w-full max-w-4/5 mx-auto overflow-hidden rounded-lg">
+                <div className="relative aspect-[16/9] w-full max-w-[340px] sm:max-w-[380px] md:max-w-[420px] mx-auto overflow-hidden rounded-lg">
                   <Image
                     src={img.image_url}
                     alt={img.alt_text ?? `Galerie ${img.id}`}
                     fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 380px, 420px"
                     className="object-cover"
                   />
                 </div>

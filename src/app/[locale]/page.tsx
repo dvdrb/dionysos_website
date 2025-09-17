@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
 import HomePageClient from "./HomePageClient";
+import type { Metadata } from "next";
 
 // Funcția pentru a prelua imaginile din GALERIE
 async function getGalleryImages() {
@@ -35,4 +36,40 @@ export default async function DionysosPage() {
   const promoItems = await getPromoItems();
 
   return <HomePageClient galleryImgs={galleryImgs} promoItems={promoItems} />;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
+  const locale = params?.locale || "ro";
+  const titles: Record<string, string> = {
+    ro: "Dionysos – Restaurant în centrul orașului",
+    ru: "Dionysos – Ресторан в центре города",
+  };
+  const descriptions: Record<string, string> = {
+    ro: "Preparate proaspete, atmosferă primitoare. Vezi meniul și galeria restaurantului Dionysos.",
+    ru: "Свежие блюда и уютная атмосфера. Ознакомьтесь с меню и галереей ресторана Dionysos.",
+  };
+  const currentTitle = titles[locale] ?? titles.ro;
+  const currentDesc = descriptions[locale] ?? descriptions.ro;
+
+  return {
+    title: currentTitle,
+    description: currentDesc,
+    alternates: {
+      canonical: `/${locale}`,
+      languages: {
+        ro: "/ro",
+        ru: "/ru",
+      },
+    },
+    openGraph: {
+      title: currentTitle,
+      description: currentDesc,
+      url: `/${locale}`,
+      locale,
+    },
+  };
 }
