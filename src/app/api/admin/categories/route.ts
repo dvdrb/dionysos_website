@@ -4,14 +4,15 @@ import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 
 export const runtime = "nodejs";
 
-function ensureAdmin() {
-  const token = cookies().get("auth_token")?.value;
+async function ensureAdmin() {
+  const jar = await cookies();
+  const token = jar.get("auth_token")?.value;
   if (!token) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   return null;
 }
 
 export async function POST(request: Request) {
-  const unauthorized = ensureAdmin();
+  const unauthorized = await ensureAdmin();
   if (unauthorized) return unauthorized;
 
   const supabaseAdmin = getSupabaseAdmin();
@@ -67,7 +68,7 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  const unauthorized = ensureAdmin();
+  const unauthorized = await ensureAdmin();
   if (unauthorized) return unauthorized;
 
   const supabaseAdmin = getSupabaseAdmin();
