@@ -1,5 +1,28 @@
 {
   "HomePage": {
-    "title": "Zdarova rda!"
+    "welcomeTo": "Добро пожаловать в",
+    "location": {
+      "center": "Центр"
+    },
+    "menuButton": "Меню",
+    "gallery": {
+      "label": "Галерея"
+    },
+    "about": {
+      "label": "О ресторане",
+      "body": "Добро пожаловать в ресторан Dionysos. Мы ждём вас с свежими блюдами и уютной атмосферой."
+    },
+    "taste": "Попробуй",
+    "now": "Сейчас",
+    "nav": {
+      "prev": "Назад",
+      "next": "Вперёд"
+    }
+  },
+  "Footer": {
+    "heading": "Контакты",
+    "address": "Strada Suveranitatii, Nisporeni",
+    "rights": "Все права защищены.",
+    "admin": "Админ"
   }
 }

@@ -1,14 +1,28 @@
 {
   "HomePage": {
-    "title": "Salut lume!"
+    "welcomeTo": "Bine ați venit la",
+    "location": {
+      "center": "Centru"
+    },
+    "menuButton": "Meniu",
+    "gallery": {
+      "label": "Galerie"
+    },
+    "about": {
+      "label": "Despre",
+      "body": "Bine ați venit la restaurantul Dionysos. Vă așteptăm cu preparate proaspete și o atmosferă primitoare."
+    },
+    "taste": "Gusta",
+    "now": "Acum",
+    "nav": {
+      "prev": "Înapoi",
+      "next": "Înainte"
+    }
   },
-  "Header": {
-    "Sushi": "Header",
-    "Sushi": "Header",
-    "Sushi": "Header",
-    "Sushi": "Header",
-    "Sushi": "Header",
-    "Sushi": "Header",
-    "Sushi": "Header"
+  "Footer": {
+    "heading": "Contacte",
+    "address": "Strada Suveranitatii, Nisporeni",
+    "rights": "Toate drepturile rezervate.",
+    "admin": "Admin"
   }
 }

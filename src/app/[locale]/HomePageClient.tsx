@@ -11,7 +11,7 @@ import type { Swiper as SwiperType } from "swiper/types";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 const heroBg = "/background.webp";
 
@@ -47,6 +47,7 @@ export default function HomePageClient({
   const menuNextRef = useRef<HTMLButtonElement | null>(null);
   const menuSwiperRef = useRef<SwiperType | null>(null);
   const locale = useLocale();
+  const t = useTranslations("HomePage");
 
   // Hook-uri pentru a conecta navigația externă (rămân la fel)
   useEffect(() => {
@@ -78,13 +79,14 @@ export default function HomePageClient({
       {/* JSON-LD: Organization/Restaurant for rich results */}
       <Script id="ld-restaurant" type="application/ld+json">
         {JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': 'Restaurant',
-          name: 'Dionysos',
-          url: typeof window !== 'undefined' ? window.location.origin : undefined,
-          image: '/dionysos_logo.png',
-          telephone: '0247928435',
-          servesCuisine: ['Greek', 'Mediterranean', 'European'],
+          "@context": "https://schema.org",
+          "@type": "Restaurant",
+          name: "Dionysos",
+          url:
+            typeof window !== "undefined" ? window.location.origin : undefined,
+          image: "/dionysos_logo.png",
+          telephone: "0247928435",
+          servesCuisine: ["Greek", "Mediterranean", "European"],
           acceptsReservations: true,
         })}
       </Script>
@@ -99,7 +101,9 @@ export default function HomePageClient({
         />
         <div className="absolute inset-0 bg-black/55" />
         <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col items-center pt-26 px-4">
-          <p className="mb-3 text-sm tracking-wide text-gray-200">Welcome to</p>
+          <p className="mb-3 text-sm tracking-wide font-medium text-gray-200">
+            {t("welcomeTo")}
+          </p>
           <Image
             src="/dionysos_logo.png"
             alt="Dionysos Logo"
@@ -109,13 +113,13 @@ export default function HomePageClient({
           />
           <div className="relative mt-20 grid w-full items-center max-w-3xl h-full grid-cols-2 gap-6">
             <LocationCard
-              label="Centru"
+              label={t("location.center")}
               phone="0247928435"
               hrefMenu={`${locale}/menu`}
             />
             <div className="pointer-events-none absolute left-1/2 top-1/2 h-full -translate-x-1/2 -translate-y-1/2 border-l border-white/50" />
             <LocationCard
-              label="Centru"
+              label={t("location.center")}
               phone="0247928435"
               hrefMenu={`${locale}/menu`}
             />
@@ -126,20 +130,20 @@ export default function HomePageClient({
       {/* Galerie Dionysos (Folosește galleryImgs) */}
       <section id="galerie" className="mx-auto w-full max-w-6xl px-4 py-12">
         <h2 className="mb-6 text-center text-sm text-gray-300">
-          Galerie{" "}
+          {t("gallery.label")} {" "}
           <span className="font-extralight text-2xl text-white">Dionysos</span>
         </h2>
         <div className="relative">
           <button
             ref={galleryPrevRef}
-            aria-label="Prev"
+            aria-label={t("nav.prev")}
             className="absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/20 p-2 backdrop-blur-sm transition hover:bg-white/10"
           >
             <ArrowLeftIcon />
           </button>
           <button
             ref={galleryNextRef}
-            aria-label="Next"
+            aria-label={t("nav.next")}
             className="absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/20 p-2 backdrop-blur-sm transition hover:bg-white/10"
           >
             <ArrowRightIcon />
@@ -176,31 +180,31 @@ export default function HomePageClient({
         className="mx-auto w-full flex flex-col items-center justify-center max-w-3xl px-10 py-8"
       >
         <h3 className="mb-4 text-base text-white">
-          Despre{" "}
+          {t("about.label")} {" "}
           <span className="text-3xl font-extralight text-white">Dionysos</span>
         </h3>
         <p className="text-center text-[15px] leading-7 text-gray-400">
-          Bine ați venit la restaurantul Dionysos...
+          {t("about.body")}
         </p>
       </section>
 
       {/* Gusta Acum (Folosește promoItems) */}
       <section id="gusta" className="mx-auto w-full max-w-6xl px-4 pb-24 pt-4">
         <div className="mb-6 flex items-center text-center justify-center gap-1">
-          <span className="text-sm font-medium text-gray-300">Gusta</span>
-          <h3 className="text-lg font-extralight text-white">Acum</h3>
+          <span className="text-sm font-medium text-gray-300">{t("taste")}</span>
+          <h3 className="text-lg font-extralight text-white">{t("now")}</h3>
         </div>
         <div className="relative">
           <button
             ref={menuPrevRef}
-            aria-label="Prev"
+            aria-label={t("nav.prev")}
             className="absolute left-0 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/20 p-2 backdrop-blur-sm transition hover:bg-white/10"
           >
             <ArrowLeftIcon />
           </button>
           <button
             ref={menuNextRef}
-            aria-label="Next"
+            aria-label={t("nav.next")}
             className="absolute right-0 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/20 p-2 backdrop-blur-sm transition hover:bg-white/10"
           >
             <ArrowRightIcon />
@@ -243,6 +247,7 @@ function LocationCard({
   phone: string;
   hrefMenu: string;
 }) {
+  const t = useTranslations("HomePage");
   return (
     <div className="flex flex-col pb-24 items-center gap-3 rounded-2xl">
       <span className="text-sm text-gray-200">{label}</span>
@@ -256,7 +261,7 @@ function LocationCard({
         href={hrefMenu}
         className="inline-flex items-center gap-2 rounded-xl bg-[#743A3A] px-6 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-[#8D4646]"
       >
-        <span>Menu</span>
+        <span>{t("menuButton")}</span>
         <BurgerIcon />
       </a>
     </div>
