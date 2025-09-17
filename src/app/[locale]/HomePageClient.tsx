@@ -297,7 +297,9 @@ export default function HomePageClient({
             <div className="bg-gray-900/95 backdrop-blur-md rounded-2xl border border-white/10 p-6">
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-light text-white">{t("location.nisporeni")}</h2>
+                <h2 className="text-xl font-light text-white">
+                  {t("location.nisporeni")}
+                </h2>
                 <button
                   onClick={closeModal}
                   className="text-gray-400 hover:text-white transition-colors"
@@ -384,7 +386,13 @@ function MenuCategoryButton({
     >
       <div className="flex-shrink-0">
         {typeof icon === "string" ? (
-          <Image src={icon} alt={label} width={24} height={24} className="w-6 h-6 object-contain" />
+          <Image
+            src={icon}
+            alt={label}
+            width={24}
+            height={24}
+            className="w-6 h-6 object-contain"
+          />
         ) : (
           icon
         )}
@@ -429,32 +437,6 @@ function MenuCard({
 }
 
 // Iconițe pentru categorii și butoane
-function BarIcon() {
-  return (
-    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M5 7V4a1 1 0 011-1h4a1 1 0 011 1v3h7a1 1 0 011 1v1a3 3 0 01-3 3v6a1 1 0 01-1 1H9a1 1 0 01-1-1v-6a3 3 0 01-3-3V8a1 1 0 011-1h-1zm2-2v2h2V5H7zm0 4v1a1 1 0 001 1h6a1 1 0 001-1V9H7z" />
-    </svg>
-  );
-}
-
-function TavernaIcon() {
-  return (
-    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="10" />
-      <path d="M8 12h8M12 8v8" stroke="white" strokeWidth="2" fill="none" />
-    </svg>
-  );
-}
-
-function SushiIcon() {
-  return (
-    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-      <rect x="4" y="10" width="16" height="4" rx="2" />
-      <circle cx="8" cy="12" r="1" fill="white" />
-      <circle cx="16" cy="12" r="1" fill="white" />
-    </svg>
-  );
-}
 
 function CloseIcon() {
   return (

@@ -2,8 +2,8 @@
   "HomePage": {
     "welcomeTo": "Bine ați venit la",
     "location": {
-      "nisporeni": "Nisporeni",
-      "varzaresti": "Vărzărești"
+      "nisporeni": "Restaurant Centru",
+      "varzaresti": "Restaurant Nou"
     },
     "menuButton": "Meniu",
     "gallery": {
@@ -27,12 +27,12 @@
   },
   "Footer": {
     "heading": "Contacte",
-    "address1": "str. Suveranității 3",
-    "address2": "str. Chișinăului 2/E",
+    "address1": "str. Suveranității 3 , Nisporeni",
+    "address2": "str. Chișinăului 2/E, Nisporeni",
     "phone1": "0681 18 111",
     "phone2": "0 69 993755",
     "mapUrl1": "https://www.google.com/maps/place/Pizza+al+forno,+Strada+Suveranitatii,+MD-6401,+Nisporeni,+Moldova/@47.0800436,28.1853951,16z/data=!4m6!3m5!1s0x40ca4bb579e2f7ff:0xa4559e97c94b950f!8m2!3d47.0800436!4d28.1853951!16s%2Fg%2F11g0j0b9mx",
-    "mapUrl2": "https://www.google.com/maps?q=str. Chișinăului 2/E",
+    "mapUrl2": "https://www.google.com/maps?q=str. Chișinăului 2/E, Nisporeni",
     "rights": "Toate drepturile rezervate.",
     "admin": "Admin"
   }
