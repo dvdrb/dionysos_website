@@ -8,11 +8,13 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import * as Icons from "lucide-react";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type SideMenuItem = {
   name: string;
   href: string;
-  Icon: React.ComponentType<{ className?: string }>;
+  Icon?: React.ComponentType<{ className?: string }>;
+  imgSrc?: string; // optional custom icon from /public
 };
 
 type MobileSidePanelProps = {
@@ -20,12 +22,14 @@ type MobileSidePanelProps = {
   onClose: () => void;
   locale: string;
   items: SideMenuItem[];
+  menuTypes: SideMenuItem[];
 };
 const MobileSidePanel = ({
   isOpen,
   onClose,
   locale,
   items,
+  menuTypes,
 }: MobileSidePanelProps) => {
   return (
     <>
@@ -54,27 +58,34 @@ const MobileSidePanel = ({
           </button>
         </div>
 
-        {/* Menu Items */}
-        <div className="overflow-y-auto  items-center flex flex-col h-full pb-20">
-          <nav className="py-4 w-fit  ">
-            {items.map((item, index) => {
-              const IconComponent = item.Icon;
-              return (
-                <div key={index}>
-                  <Link
-                    href={item.href}
-                    className="flex items-center  gap-4 px-6 py-3 text-gray-800 hover:bg-gray-200 transition-colors"
-                    onClick={onClose}
-                  >
-                    <IconComponent className="w-6 h-6 text-gray-600" />
-                    <span className="text-lg font-medium">{item.name}</span>
-                  </Link>
-                  {index < items.length - 1 && (
-                    <div className="mx-6 border-b border-gray-200" />
-                  )}
-                </div>
-              );
-            })}
+        {/* Side Panel Content */}
+        <div className="overflow-y-auto items-center flex flex-col h-full pb-20">
+          {/* Menu Types only */}
+          <nav className="py-2 w-full">
+            {menuTypes.map((item, index) => (
+              <div key={`menu-${index}`}>
+                <Link
+                  href={item.href}
+                  className="flex items-center gap-4 px-6 py-3 text-gray-800 hover:bg-gray-200 transition-colors"
+                  onClick={onClose}
+                >
+                  {item.imgSrc ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={item.imgSrc}
+                      alt={item.name}
+                      className="w-6 h-6"
+                    />
+                  ) : item.Icon ? (
+                    <item.Icon className="w-6 h-6 text-gray-600" />
+                  ) : null}
+                  <span className="text-lg font-medium">{item.name}</span>
+                </Link>
+                {index < menuTypes.length - 1 && (
+                  <div className="mx-6 border-b border-gray-200" />
+                )}
+              </div>
+            ))}
           </nav>
         </div>
       </div>
@@ -85,6 +96,7 @@ const MobileSidePanel = ({
 const Header = () => {
   const locale = useLocale();
   const pathname = usePathname();
+  const t = useTranslations("HomePage");
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
   const [cats, setCats] = useState<
     Array<{ id: number; name: string; icon: string | null; href: string }>
@@ -150,6 +162,26 @@ const Header = () => {
     }));
   }, [cats, loadingCats, catsError, locale]);
 
+  const menuTypes: SideMenuItem[] = useMemo(() => {
+    return [
+      {
+        name: t("modal.taverna"),
+        href: `/${locale}/menu/taverna`,
+        imgSrc: "/icon_taverna.svg",
+      },
+      {
+        name: t("modal.bar"),
+        href: `/${locale}/menu/bar`,
+        imgSrc: "/icon_bar.svg",
+      },
+      {
+        name: t("modal.sushi"),
+        href: `/${locale}/menu/sushi`,
+        imgSrc: "/icon_sushi.svg",
+      },
+    ];
+  }, [locale, t]);
+
   return (
     <>
       <header className="sticky top-0 z-40 bg-black text-white">
@@ -179,6 +211,25 @@ const Header = () => {
             <span className="block w-8 h-0.5 bg-white"></span>
             <span className="block w-8 h-0.5 bg-white"></span>
           </label>
+
+          {/* Desktop Menu Types */}
+          <nav className="hidden md:flex items-center gap-5 ml-3">
+            {menuTypes.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="inline-flex items-center gap-2 text-sm text-gray-200 hover:text-white"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {item.imgSrc ? (
+                  <img src={item.imgSrc} alt={item.name} className="w-5 h-5" />
+                ) : item.Icon ? (
+                  <item.Icon className="w-5 h-5" />
+                ) : null}
+                <span>{item.name}</span>
+              </Link>
+            ))}
+          </nav>
 
           {/* Logo */}
           <div className="absolute left-1/2 transform -translate-x-1/2">
@@ -232,6 +283,7 @@ const Header = () => {
         onClose={() => setIsSidePanelOpen(false)}
         locale={locale}
         items={sideMenuItems}
+        menuTypes={menuTypes}
       />
     </>
   );

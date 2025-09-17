@@ -2,7 +2,8 @@
   "HomePage": {
     "welcomeTo": "Добро пожаловать в",
     "location": {
-      "center": "Центр"
+      "nisporeni": "Nisporeni",
+      "varzaresti": "Vărzărești"
     },
     "menuButton": "Меню",
     "gallery": {
@@ -10,18 +11,28 @@
     },
     "about": {
       "label": "О ресторане",
-      "body": "Добро пожаловать в ресторан Dionysos. Мы ждём вас с свежими блюдами и уютной атмосферой."
+      "body": "Добро пожаловать в ресторан «Дионис», где каждый гость становится частью семьи. Ресторан расположен в двух уютных залах, где вы сможете насладиться изысканной атмосферой и великолепием кулинарных блюд."
     },
     "taste": "Попробуй",
     "now": "Сейчас",
     "nav": {
       "prev": "Назад",
       "next": "Вперёд"
+    },
+    "modal": {
+      "bar": "Бар",
+      "taverna": "Меню таверны",
+      "sushi": "Суши меню"
     }
   },
   "Footer": {
     "heading": "Контакты",
-    "address": "Strada Suveranitatii, Nisporeni",
+    "address1": "str. Suveranității 3",
+    "address2": "str. Chișinăului 2/E",
+    "phone1": "0681 18 111",
+    "phone2": "0 69 993755",
+    "mapUrl1": "https://www.google.com/maps/place/Pizza+al+forno,+Strada+Suveranitatii,+MD-6401,+Nisporeni,+Moldova/@47.0800436,28.1853951,16z/data=!4m6!3m5!1s0x40ca4bb579e2f7ff:0xa4559e97c94b950f!8m2!3d47.0800436!4d28.1853951!16s%2Fg%2F11g0j0b9mx",
+    "mapUrl2": "https://www.google.com/maps?q=str. Chișinăului 2/E",
     "rights": "Все права защищены.",
     "admin": "Админ"
   }

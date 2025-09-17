@@ -67,13 +67,13 @@ type MenuSectionProps = { id: string; items: MenuImageType[] };
 const MenuSection = ({ id, items }: MenuSectionProps) => (
   <section id={id} className="scroll-mt-20">
     <div className="container mx-auto px-2 sm:px-4">
-      <div className="flex flex-col items-center gap-4">
+      <div className="flex flex-col items-center ">
         {items.map((item) => (
           <img
             key={item.id}
             src={item.image_url}
             alt={item.alt_text ?? ""}
-            className="w-full max-w-3xl rounded-lg shadow-lg"
+            className="w-full max-w-3xl shadow-lg"
           />
         ))}
       </div>
@@ -158,26 +158,33 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
     );
   }
 
-  const origin =
-    typeof window !== "undefined"
-      ? window.location.origin
-      : process.env.NEXT_PUBLIC_SITE_URL || "";
-  const menuUrl = `${origin}/${locale}/menu`;
+  const isBrowser = typeof window !== "undefined";
+  const origin = isBrowser
+    ? window.location.origin
+    : process.env.NEXT_PUBLIC_SITE_URL || "";
+  const menuUrl = isBrowser
+    ? `${origin}${window.location.pathname}`
+    : `${origin}/${locale}/menu`;
   const ld = JSON.stringify([
     {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: `${origin}/${locale}` },
-        { '@type': 'ListItem', position: 2, name: 'Menu', item: menuUrl },
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: `${origin}/${locale}`,
+        },
+        { "@type": "ListItem", position: 2, name: "Menu", item: menuUrl },
       ],
     },
     {
-      '@context': 'https://schema.org',
-      '@type': 'Menu',
-      name: 'Dionysos Menu',
+      "@context": "https://schema.org",
+      "@type": "Menu",
+      name: "Dionysos Menu",
       hasMenuSection: sections.map((s) => ({
-        '@type': 'MenuSection',
+        "@type": "MenuSection",
         name: s.name,
         url: `${menuUrl}#${s.id}`,
       })),
@@ -201,9 +208,6 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
         {sections.map((section, index) => (
           <React.Fragment key={section.id}>
             <MenuSection id={section.id} items={section.items} />
-            {index < sections.length - 1 && (
-              <hr className="my-4 border-gray-700 max-w-4xl mx-auto" />
-            )}
           </React.Fragment>
         ))}
       </main>

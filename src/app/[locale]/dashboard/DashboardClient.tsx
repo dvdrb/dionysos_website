@@ -16,6 +16,7 @@ export type Category = {
   icon: string | null;
   name_ro?: string | null;
   name_ru?: string | null;
+  menu?: string | null;
 };
 export type GalleryImage = {
   id: number;
@@ -72,6 +73,15 @@ export default function DashboardClient({
     menuImages: initialData?.menuImages ?? [],
   };
   const [activeTab, setActiveTab] = useState("categories");
+  const [cats, setCats] = useState<Category[]>(safeData.categories);
+  const MENUS = [
+    { id: "taverna", label: "Taverna" },
+    { id: "bar", label: "Bar" },
+    { id: "sushi", label: "Sushi" },
+  ] as const;
+  const [selectedMenu, setSelectedMenu] = useState<(typeof MENUS)[number]["id"]>(
+    "taverna"
+  );
 
   const tabs = [
     { id: "categories", label: "Categorii" },
@@ -83,10 +93,25 @@ export default function DashboardClient({
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
       <header className="sticky top-0 z-30 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b border-gray-200">
-        <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
           <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
             Admin Dashboard
           </h1>
+          <div className="flex items-center gap-2">
+            <label htmlFor="menu-select" className="text-sm text-gray-700">Menu</label>
+            <select
+              id="menu-select"
+              value={selectedMenu}
+              onChange={(e) => setSelectedMenu(e.target.value as any)}
+              className="rounded-md border-gray-300 bg-white py-1.5 px-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+            >
+              {MENUS.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.label}
+                </option>
+              ))}
+            </select>
+          </div>
           <LogoutButton />
         </div>
         <div className="w-full overflow-x-auto">
@@ -125,7 +150,12 @@ export default function DashboardClient({
           hidden={activeTab !== "categories"}
         >
           {activeTab === "categories" && (
-            <CategoriesManager initialCategories={safeData?.categories} />
+            <CategoriesManager
+              initialCategories={cats}
+              selectedMenu={selectedMenu}
+              onCreated={(c) => setCats((prev) => [...prev, c])}
+              onDeleted={(id) => setCats((prev) => prev.filter((x) => x.id !== id))}
+            />
           )}
         </div>
         <div
@@ -136,7 +166,8 @@ export default function DashboardClient({
           {activeTab === "menu_images" && (
             <MenuImagesManager
               initialMenuImages={safeData?.menuImages}
-              categories={safeData?.categories}
+              categories={cats}
+              selectedMenu={selectedMenu}
             />
           )}
         </div>

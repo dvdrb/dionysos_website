@@ -25,7 +25,8 @@ export async function POST(request: Request) {
 
   const body = await request.json().catch(() => null);
   if (!body) return NextResponse.json({ message: "Invalid body" }, { status: 400 });
-  const { name_ro, name_ru, icon } = body;
+  const { name_ro, name_ru, icon, menu } = body;
+  const ALLOWED_MENUS = new Set(["taverna", "bar", "sushi"]);
 
   // Prefer ro as base name if available
   const baseName = name_ro || body.name || "";
@@ -36,10 +37,18 @@ export async function POST(request: Request) {
     );
   }
 
+  if (menu && !ALLOWED_MENUS.has(menu)) {
+    return NextResponse.json(
+      { message: "Invalid menu. Allowed: taverna, bar, sushi" },
+      { status: 400 }
+    );
+  }
+
   // Try insert with multilingual fields if present; if columns do not exist, retry with minimal fields
   let insertObj: any = { name: baseName, icon: icon ?? null };
   if (name_ro) insertObj.name_ro = name_ro;
   if (name_ru) insertObj.name_ru = name_ru;
+  if (menu) insertObj.menu = menu;
 
   let data, error;
   ({ data, error } = await supabaseAdmin

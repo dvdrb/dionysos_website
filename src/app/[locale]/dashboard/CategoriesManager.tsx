@@ -6,8 +6,14 @@ import * as Icons from "lucide-react";
 
 export default function CategoriesManager({
   initialCategories,
+  selectedMenu,
+  onCreated,
+  onDeleted,
 }: {
   initialCategories: Category[];
+  selectedMenu: string;
+  onCreated?: (c: Category) => void;
+  onDeleted?: (id: number) => void;
 }) {
   const [categories, setCategories] = useState<Category[]>(
     initialCategories ?? []
@@ -18,6 +24,12 @@ export default function CategoriesManager({
   const [showPicker, setShowPicker] = useState(false);
   const [iconQuery, setIconQuery] = useState("");
   const router = useRouter();
+  const MENUS = [
+    { id: "taverna", label: "Taverna" },
+    { id: "bar", label: "Bar" },
+    { id: "sushi", label: "Sushi" },
+  ] as const;
+  const [menu, setMenu] = useState<string>(selectedMenu);
 
   const iconNames = useMemo(() => {
     return Object.keys(Icons)
@@ -37,12 +49,13 @@ export default function CategoriesManager({
       const res = await fetch("/api/admin/categories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name_ro: nameRO, name_ru: nameRU, icon }),
+        body: JSON.stringify({ name_ro: nameRO, name_ru: nameRU, icon, menu }),
       });
       const j = await res.json();
       if (!res.ok) throw new Error(j?.message || "Eroare la creare");
       const item: Category = j.item;
       setCategories([...categories, item]);
+      onCreated?.(item);
       setNameRO("");
       setNameRU("");
       setIcon("");
@@ -68,6 +81,7 @@ export default function CategoriesManager({
       const j = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(j?.message || "Eroare la ștergere");
       setCategories(categories.filter((c) => c.id !== id));
+      onDeleted?.(id);
       router.refresh();
     } catch (err: any) {
       alert(err?.message || "Eroare la ștergere");
@@ -81,7 +95,7 @@ export default function CategoriesManager({
       </h2>
       <form
         onSubmit={addCategory}
-        className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-3"
+        className="mb-6 grid grid-cols-1 sm:grid-cols-4 gap-3"
       >
         <div className="col-span-1">
           <label
@@ -147,6 +161,23 @@ export default function CategoriesManager({
             </div>
           )}
         </div>
+        <div className="col-span-1">
+          <label className="block text-sm font-medium text-gray-700" htmlFor="cat-menu">
+            Menu
+          </label>
+          <select
+            id="cat-menu"
+            value={menu}
+            onChange={(e) => setMenu(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+          >
+            {MENUS.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.label}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className="col-span-1 flex items-end">
           <button
             type="submit"
@@ -195,7 +226,9 @@ export default function CategoriesManager({
         </div>
       )}
       <ul className="space-y-2">
-        {(categories ?? []).map((cat) => (
+        {(categories ?? [])
+          .filter((c) => (c.menu ? c.menu === selectedMenu : true))
+          .map((cat) => (
           <li
             key={cat.id}
             className="flex items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white px-3 py-2"
@@ -203,6 +236,7 @@ export default function CategoriesManager({
             <span className="text-sm text-gray-800 truncate">
               {cat.name_ro || cat.name} / {cat.name_ru || "-"}
               {cat.icon ? ` (${cat.icon})` : ""}
+              {cat.menu ? ` — ${cat.menu}` : ""}
             </span>
             <button
               onClick={() => deleteCategory(cat.id)}

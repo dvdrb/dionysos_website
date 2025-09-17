@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MenuImage, Category } from "./DashboardClient";
 
@@ -20,14 +20,28 @@ async function uploadViaApi(file: File, categoryId: string, alt?: string) {
 export default function MenuImagesManager({
   initialMenuImages,
   categories,
+  selectedMenu,
 }: {
   initialMenuImages: MenuImage[];
   categories: Category[];
+  selectedMenu: string;
 }) {
   const [images, setImages] = useState(initialMenuImages ?? []);
-  const [selectedCategory, setSelectedCategory] = useState<string>(
-    categories[0]?.id.toString() ?? ""
-  );
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  // Strictly show categories that belong to the selected menu
+  const filteredCategories = (categories || []).filter((c) => c.menu === selectedMenu);
+  useEffect(() => {
+    if (filteredCategories.length === 0) {
+      setSelectedCategory("");
+      return;
+    }
+    if (!selectedCategory) {
+      setSelectedCategory(String(filteredCategories[0].id));
+    } else if (!filteredCategories.find((c) => String(c.id) === selectedCategory)) {
+      setSelectedCategory(String(filteredCategories[0].id));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedMenu, categories]);
   const [uploading, setUploading] = useState(false);
   const router = useRouter();
 
@@ -79,7 +93,7 @@ export default function MenuImagesManager({
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="mt-1 block w-full rounded-md border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
           >
-          {categories.map((cat) => (
+          {filteredCategories.map((cat) => (
             <option key={cat.id} value={cat.id}>
               {(cat as any).name_ro || cat.name}
             </option>
@@ -100,7 +114,10 @@ export default function MenuImagesManager({
           <p className="text-xs text-gray-500">Selectează categoria înainte de a încărca.</p>
         </div>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+      {filteredCategories.length === 0 ? (
+        <p className="text-sm text-gray-600">Nu există categorii pentru meniul selectat.</p>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {imagesForSelectedCategory.map((img) => (
           <div key={img.id} className="relative group rounded-md overflow-hidden border border-gray-200 bg-white">
             <img
@@ -119,7 +136,8 @@ export default function MenuImagesManager({
             </button>
           </div>
         ))}
-      </div>
+        </div>
+      )}
     </section>
   );
 }

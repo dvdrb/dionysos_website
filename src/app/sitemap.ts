@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
 
 const locales = ["ro", "ru"] as const;
+const menus = ["taverna", "bar", "sushi"] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const site = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
-  const paths = ["", "/menu"]; // Core public routes per locale
+  const paths = ["", "/menu", ...menus.map((m) => `/menu/${m}`)];
 
   const entries: MetadataRoute.Sitemap = [];
   for (const locale of locales) {
@@ -19,4 +20,3 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }
   return entries;
 }
-

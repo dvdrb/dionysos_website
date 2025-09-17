@@ -4,16 +4,22 @@ import Image from "next/image";
 import Script from "next/script";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Swiper as SwiperType } from "swiper/types";
 
 // Importă stilurile Swiper
+
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { useLocale, useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const heroBg = "/background.webp";
+const sushiIcon = "/icon_sushi.svg";
+const tavernaIcon = "/icon_taverna.svg";
+const barIcon = "/icon_bar.svg";
 
 // --- TIPURI PENTRU DATELE DINAMICE ---
 type GalleryImage = {
@@ -39,6 +45,9 @@ export default function HomePageClient({
   galleryImgs,
   promoItems,
 }: HomePageClientProps) {
+  // State pentru modal
+  const [showModal, setShowModal] = useState(false);
+
   // Referințe pentru Swiper-e
   const galleryPrevRef = useRef<HTMLButtonElement | null>(null);
   const galleryNextRef = useRef<HTMLButtonElement | null>(null);
@@ -48,6 +57,7 @@ export default function HomePageClient({
   const menuSwiperRef = useRef<SwiperType | null>(null);
   const locale = useLocale();
   const t = useTranslations("HomePage");
+  const router = useRouter();
 
   // Hook-uri pentru a conecta navigația externă (rămân la fel)
   useEffect(() => {
@@ -74,6 +84,43 @@ export default function HomePageClient({
     }
   }, []);
 
+  // Funcție pentru deschiderea modalului
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  // Funcție pentru închiderea modalului
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  // Închide modalul când se apasă ESC
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeModal();
+      }
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, []);
+
+  // Prefetch target menu pages when modal opens to reduce latency
+  useEffect(() => {
+    if (!showModal) return;
+    const targets = [
+      `/${locale}/menu/bar`,
+      `/${locale}/menu/taverna`,
+      `/${locale}/menu/sushi`,
+    ];
+    for (const href of targets) {
+      try {
+        // @ts-ignore: prefetch exists in app router
+        router.prefetch?.(href);
+      } catch {}
+    }
+  }, [showModal, locale]);
+
   return (
     <div className="bg-black text-white pt-13">
       {/* JSON-LD: Organization/Restaurant for rich results */}
@@ -90,6 +137,7 @@ export default function HomePageClient({
           acceptsReservations: true,
         })}
       </Script>
+
       {/* HERO (Rămâne la fel) */}
       <section className="relative h-[86svh] min-h-[640px] w-full overflow-hidden">
         <Image
@@ -113,15 +161,15 @@ export default function HomePageClient({
           />
           <div className="relative mt-20 grid w-full items-center max-w-3xl h-full grid-cols-2 gap-6">
             <LocationCard
-              label={t("location.center")}
-              phone="0247928435"
-              hrefMenu={`${locale}/menu`}
+              label={t("location.varzaresti")}
+              phone="069993755"
+              onMenuClick={openModal}
             />
             <div className="pointer-events-none absolute left-1/2 top-1/2 h-full -translate-x-1/2 -translate-y-1/2 border-l border-white/50" />
             <LocationCard
-              label={t("location.center")}
-              phone="0247928435"
-              hrefMenu={`${locale}/menu`}
+              label={t("location.nisporeni")}
+              phone="068118111"
+              onMenuClick={openModal}
             />
           </div>
         </div>
@@ -130,7 +178,7 @@ export default function HomePageClient({
       {/* Galerie Dionysos (Folosește galleryImgs) */}
       <section id="galerie" className="mx-auto w-full max-w-6xl px-4 py-12">
         <h2 className="mb-6 text-center text-sm text-gray-300">
-          {t("gallery.label")} {" "}
+          {t("gallery.label")}{" "}
           <span className="font-extralight text-2xl text-white">Dionysos</span>
         </h2>
         <div className="relative">
@@ -180,7 +228,7 @@ export default function HomePageClient({
         className="mx-auto w-full flex flex-col items-center justify-center max-w-3xl px-10 py-8"
       >
         <h3 className="mb-4 text-base text-white">
-          {t("about.label")} {" "}
+          {t("about.label")}{" "}
           <span className="text-3xl font-extralight text-white">Dionysos</span>
         </h3>
         <p className="text-center text-[15px] leading-7 text-gray-400">
@@ -191,7 +239,9 @@ export default function HomePageClient({
       {/* Gusta Acum (Folosește promoItems) */}
       <section id="gusta" className="mx-auto w-full max-w-6xl px-4 pb-24 pt-4">
         <div className="mb-6 flex items-center text-center justify-center gap-1">
-          <span className="text-sm font-medium text-gray-300">{t("taste")}</span>
+          <span className="text-sm font-medium text-gray-300">
+            {t("taste")}
+          </span>
           <h3 className="text-lg font-extralight text-white">{t("now")}</h3>
         </div>
         <div className="relative">
@@ -232,20 +282,69 @@ export default function HomePageClient({
           </Swiper>
         </div>
       </section>
+
+      {/* Modal pentru categorii meniu */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            onClick={closeModal}
+          />
+
+          {/* Modal Content */}
+          <div className="relative z-10 w-full max-w-md mx-4">
+            <div className="bg-gray-900/95 backdrop-blur-md rounded-2xl border border-white/10 p-6">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-light text-white">{t("location.nisporeni")}</h2>
+                <button
+                  onClick={closeModal}
+                  className="text-gray-400 hover:text-white transition-colors"
+                  aria-label="Închide"
+                >
+                  <CloseIcon />
+                </button>
+              </div>
+
+              {/* Menu Categories */}
+              <div className="space-y-4">
+                <MenuCategoryButton
+                  icon={barIcon}
+                  label={t("modal.bar")}
+                  href={`/${locale}/menu/bar`}
+                />
+
+                <MenuCategoryButton
+                  icon={tavernaIcon}
+                  label={t("modal.taverna")}
+                  href={`/${locale}/menu/taverna`}
+                />
+
+                <MenuCategoryButton
+                  icon={sushiIcon}
+                  label={t("modal.sushi")}
+                  href={`/${locale}/menu/sushi`}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// --- COMPONENTE AUXILIARE ȘI ICONIȚE (Rămân la fel) ---
+// --- COMPONENTE AUXILIARE ȘI ICONIȚE ---
 
 function LocationCard({
   label,
   phone,
-  hrefMenu,
+  onMenuClick,
 }: {
   label: string;
   phone: string;
-  hrefMenu: string;
+  onMenuClick: () => void;
 }) {
   const t = useTranslations("HomePage");
   return (
@@ -257,14 +356,41 @@ function LocationCard({
       >
         {phone}
       </a>
-      <a
-        href={hrefMenu}
+      <button
+        onClick={onMenuClick}
         className="inline-flex items-center gap-2 rounded-xl bg-[#743A3A] px-6 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-[#8D4646]"
       >
         <span>{t("menuButton")}</span>
         <BurgerIcon />
-      </a>
+      </button>
     </div>
+  );
+}
+
+function MenuCategoryButton({
+  icon,
+  label,
+  href,
+}: {
+  icon: React.ReactNode | string;
+  label: string;
+  href: string;
+}) {
+  return (
+    <Link
+      prefetch
+      href={href}
+      className="w-full flex items-center gap-4 bg-white/90 hover:bg-white text-gray-900 rounded-xl px-6 py-4 transition-all duration-200 hover:scale-[1.02]"
+    >
+      <div className="flex-shrink-0">
+        {typeof icon === "string" ? (
+          <Image src={icon} alt={label} width={24} height={24} className="w-6 h-6 object-contain" />
+        ) : (
+          icon
+        )}
+      </div>
+      <span className="font-medium text-left">{label}</span>
+    </Link>
   );
 }
 
@@ -302,6 +428,52 @@ function MenuCard({
   );
 }
 
+// Iconițe pentru categorii și butoane
+function BarIcon() {
+  return (
+    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M5 7V4a1 1 0 011-1h4a1 1 0 011 1v3h7a1 1 0 011 1v1a3 3 0 01-3 3v6a1 1 0 01-1 1H9a1 1 0 01-1-1v-6a3 3 0 01-3-3V8a1 1 0 011-1h-1zm2-2v2h2V5H7zm0 4v1a1 1 0 001 1h6a1 1 0 001-1V9H7z" />
+    </svg>
+  );
+}
+
+function TavernaIcon() {
+  return (
+    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M8 12h8M12 8v8" stroke="white" strokeWidth="2" fill="none" />
+    </svg>
+  );
+}
+
+function SushiIcon() {
+  return (
+    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+      <rect x="4" y="10" width="16" height="4" rx="2" />
+      <circle cx="8" cy="12" r="1" fill="white" />
+      <circle cx="16" cy="12" r="1" fill="white" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg
+      className="w-6 h-6"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M6 18L18 6M6 6l12 12"
+      />
+    </svg>
+  );
+}
+
 function ArrowLeftIcon() {
   return (
     <svg
@@ -315,6 +487,7 @@ function ArrowLeftIcon() {
     </svg>
   );
 }
+
 function ArrowRightIcon() {
   return (
     <svg
@@ -328,6 +501,7 @@ function ArrowRightIcon() {
     </svg>
   );
 }
+
 function BurgerIcon() {
   return (
     <svg
