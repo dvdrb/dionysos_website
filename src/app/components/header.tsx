@@ -7,22 +7,7 @@ import { useLocale } from "next-intl";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import * as Icons from "lucide-react";
-import {
-  X,
-  Coffee,
-  Soup,
-  Salad,
-  Cookie,
-  Mountain,
-  Pizza,
-  Beef,
-  Sandwich,
-  ChefHat,
-  IceCream,
-  Cake,
-  Star,
-  Wine,
-} from "lucide-react";
+import { X } from "lucide-react";
 
 type SideMenuItem = {
   name: string;

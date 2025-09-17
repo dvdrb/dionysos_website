@@ -10,6 +10,7 @@ import type { Swiper as SwiperType } from "swiper/types";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { useLocale } from "next-intl";
 
 const heroBg = "/background.webp";
 
@@ -44,6 +45,7 @@ export default function HomePageClient({
   const menuPrevRef = useRef<HTMLButtonElement | null>(null);
   const menuNextRef = useRef<HTMLButtonElement | null>(null);
   const menuSwiperRef = useRef<SwiperType | null>(null);
+  const locale = useLocale();
 
   // Hook-uri pentru a conecta navigația externă (rămân la fel)
   useEffect(() => {
@@ -92,9 +94,17 @@ export default function HomePageClient({
             className="object-cover"
           />
           <div className="relative mt-20 grid w-full items-center max-w-3xl h-full grid-cols-2 gap-6">
-            <LocationCard label="Centru" phone="0247928435" hrefMenu="/menu" />
+            <LocationCard
+              label="Centru"
+              phone="0247928435"
+              hrefMenu={`${locale}/menu`}
+            />
             <div className="pointer-events-none absolute left-1/2 top-1/2 h-full -translate-x-1/2 -translate-y-1/2 border-l border-white/50" />
-            <LocationCard label="Centru" phone="0247928435" hrefMenu="/menu" />
+            <LocationCard
+              label="Centru"
+              phone="0247928435"
+              hrefMenu={`${locale}/menu`}
+            />
           </div>
         </div>
       </section>
@@ -127,11 +137,11 @@ export default function HomePageClient({
             onSwiper={(swiper) => {
               gallerySwiperRef.current = swiper;
             }}
-            className="rounded-xl border border-white/10 bg-white/5 p-2"
+            className="bg-transparent p-0 border-0 rounded-none"
           >
             {galleryImgs.map((img) => (
               <SwiperSlide key={img.id} className="!h-auto">
-                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg">
+                <div className="relative aspect-[16/9] w-full max-w-4/5 mx-auto overflow-hidden rounded-lg">
                   <Image
                     src={img.image_url}
                     alt={img.alt_text ?? `Galerie ${img.id}`}
