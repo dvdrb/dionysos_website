@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MenuImage, Category } from "./DashboardClient";
+import { supabase } from "@/lib/supabaseClient";
 import { useTranslations } from "next-intl";
 
 async function uploadViaApi(file: File, categoryId: string, alt?: string) {
@@ -12,9 +13,44 @@ async function uploadViaApi(file: File, categoryId: string, alt?: string) {
   const res = await fetch("/api/admin/menu-images", { method: "POST", body: fd });
   if (!res.ok) {
     const j = await res.json().catch(() => ({}));
-    throw new Error(j?.error || j?.message || `Upload failed (${res.status})`);
+    const err: any = new Error(j?.error || j?.message || `Upload failed (${res.status})`);
+    (err.status = res.status);
+    throw err;
   }
   const j = await res.json();
+  return j.item as MenuImage;
+}
+
+async function uploadWithSignedUrl(file: File, categoryId: string, alt?: string) {
+  const signRes = await fetch("/api/admin/menu-images/sign", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ filename: file.name, contentType: file.type }),
+  });
+  if (!signRes.ok) {
+    const j = await signRes.json().catch(() => ({}));
+    throw new Error(j?.message || `Failed to get signed URL (${signRes.status})`);
+  }
+  const { path, token } = await signRes.json();
+
+  const upRes = await supabase.storage
+    .from("menu")
+    // @ts-ignore
+    .uploadToSignedUrl(path, token, file);
+  if ((upRes as any)?.error) {
+    throw new Error((upRes as any).error?.message || "Signed upload failed");
+  }
+
+  const completeRes = await fetch("/api/admin/menu-images/complete", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ path, category_id: Number(categoryId), alt_text: alt ?? file.name }),
+  });
+  if (!completeRes.ok) {
+    const j = await completeRes.json().catch(() => ({}));
+    throw new Error(j?.message || `DB insert failed (${completeRes.status})`);
+  }
+  const j = await completeRes.json();
   return j.item as MenuImage;
 }
 
@@ -52,7 +88,16 @@ export default function MenuImagesManager({
     if (!file || !selectedCategory) return;
     setUploading(true);
     try {
-      const item = await uploadViaApi(file, selectedCategory, file.name);
+      let item: MenuImage;
+      try {
+        item = await uploadViaApi(file, selectedCategory, file.name);
+      } catch (err: any) {
+        if (err?.status === 413) {
+          item = await uploadWithSignedUrl(file, selectedCategory, file.name);
+        } else {
+          throw err;
+        }
+      }
       setImages([item, ...images]);
       router.refresh();
     } catch (error: any) {
