@@ -126,6 +126,11 @@ const Header = () => {
     setIsSidePanelOpen(!isSidePanelOpen);
   };
 
+  const isSushiPage = useMemo(() => {
+    const p = pathname || "";
+    return /^\/(ro|ru|en)\/menu\/sushi(\/|$)/.test(p);
+  }, [pathname]);
+
   // Close language dropdown on outside click or Escape
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
@@ -251,8 +256,8 @@ const Header = () => {
               className="text-xl md:text-2xl font-light tracking-widest text-center"
             >
               <Image
-                src="/dionysos_logo.png"
-                alt="Dionysos restaurant logo"
+                src={isSushiPage ? "/suhsi_logo.png" : "/dionysos_logo.png"}
+                alt={isSushiPage ? "Dionysos Sushi logo" : "Dionysos restaurant logo"}
                 width={130}
                 height={32}
                 priority
