@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MenuImage, Category } from "./DashboardClient";
+import { useTranslations } from "next-intl";
 
 async function uploadViaApi(file: File, categoryId: string, alt?: string) {
   const fd = new FormData();
@@ -26,6 +27,7 @@ export default function MenuImagesManager({
   categories: Category[];
   selectedMenu: string;
 }) {
+  const t = useTranslations("Dashboard");
   const [images, setImages] = useState(initialMenuImages ?? []);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   // Strictly show categories that belong to the selected menu
@@ -55,14 +57,14 @@ export default function MenuImagesManager({
       router.refresh();
     } catch (error: any) {
       console.error("Upload error (menu)", error);
-      alert(`Eroare la încărcare: ${error?.message || error}.`);
+      alert(`${t("images.status.uploading")}: ${error?.message || error}.`);
     } finally {
       setUploading(false);
     }
   };
 
   const deleteImage = async (id: number, imageUrl: string) => {
-    if (!confirm("Ești sigur?")) return;
+    if (!confirm(t("promo.confirm.delete"))) return;
     const res = await fetch("/api/admin/menu-images", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
@@ -70,7 +72,7 @@ export default function MenuImagesManager({
     });
     if (!res.ok) {
       const j = await res.json().catch(() => ({}));
-      alert(j?.message || "Eroare la ștergere");
+      alert(j?.message || t("categories.alerts.deleteError"));
       return;
     }
     setImages(images.filter((img) => img.id !== id));
@@ -83,10 +85,10 @@ export default function MenuImagesManager({
 
   return (
     <section className="bg-white/70 backdrop-blur rounded-xl shadow-sm ring-1 ring-black/5 p-4 sm:p-6">
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Gestionează Imagini Meniu</h2>
+      <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">{t("images.heading")}</h2>
       <div className="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
         <div className="col-span-1">
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700">Categorie</label>
+          <label htmlFor="category" className="block text-sm font-medium text-gray-700">{t("images.labels.category")}</label>
           <select
             id="category"
             value={selectedCategory}
@@ -101,21 +103,21 @@ export default function MenuImagesManager({
           </select>
         </div>
         <div className="col-span-1">
-          <label className="block text-sm font-medium text-gray-700">Încarcă imagine</label>
+          <label className="block text-sm font-medium text-gray-700">{t("images.labels.upload")}</label>
           <input
             type="file"
             onChange={handleUpload}
             disabled={uploading || !selectedCategory}
             className="mt-1 block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-indigo-50 file:py-2 file:px-3 file:text-indigo-700 hover:file:bg-indigo-100"
           />
-          {uploading && <p className="text-sm text-gray-600 mt-1">Se încarcă...</p>}
+          {uploading && <p className="text-sm text-gray-600 mt-1">{t("images.status.uploading")}</p>}
         </div>
         <div className="col-span-1 flex items-end">
-          <p className="text-xs text-gray-500">Selectează categoria înainte de a încărca.</p>
+          <p className="text-xs text-gray-500">{t("images.hints.selectCategory")}</p>
         </div>
       </div>
       {filteredCategories.length === 0 ? (
-        <p className="text-sm text-gray-600">Nu există categorii pentru meniul selectat.</p>
+        <p className="text-sm text-gray-600">{t("images.empty.noCategories")}</p>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {imagesForSelectedCategory.map((img) => (
@@ -129,8 +131,8 @@ export default function MenuImagesManager({
             <button
               onClick={() => deleteImage(img.id, img.image_url)}
               className="absolute top-1 right-1 rounded-full bg-red-600/90 p-1.5 text-white shadow hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-              aria-label="Șterge imaginea"
-              title="Șterge"
+              aria-label={t("images.actions.deleteAria")}
+              title={t("images.actions.delete")}
             >
               &times;
             </button>

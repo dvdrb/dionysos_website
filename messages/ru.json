@@ -2,8 +2,8 @@
   "HomePage": {
     "welcomeTo": "Добро пожаловать в",
     "location": {
-      "nisporeni": "Restaurant Centru",
-      "varzaresti": "Restaurant Nou"
+      "nisporeni": "Dionysos Taverna",
+      "varzaresti": "Dionysos Sushi"
     },
     "menuButton": "Меню",
     "gallery": {
@@ -35,5 +35,63 @@
     "mapUrl2": "https://www.google.com/maps?q=str. Chișinăului 2/E",
     "rights": "Все права защищены.",
     "admin": "Админ"
+  },
+  "Login": {
+    "title": "Вход администратора",
+    "username": "Имя пользователя",
+    "password": "Пароль",
+    "submit": "Войти",
+    "error": "Неверные данные для входа."
+  },
+  "Dashboard": {
+    "title": "Админ-панель",
+    "logout": "Выйти",
+    "menuLabel": "Меню",
+    "tabs": {
+      "categories": "Категории",
+      "menu_images": "Изображения меню",
+      "promo_items": "Промо",
+      "gallery": "Галерея"
+    },
+    "menus": {"taverna": "Таверна", "bar": "Бар", "sushi": "Суши"},
+    "categories": {
+      "heading": "Управление категориями",
+      "labels": {
+        "name_ro": "Имя (RO)",
+        "name_ru": "Имя (RU)",
+        "name_en": "Имя (EN)",
+        "icon": "Иконка (lucide-react)",
+        "iconPlaceholder": "напр.: Pizza, Beef, Salad",
+        "iconToggleShow": "Показать иконки",
+        "iconToggleHide": "Скрыть",
+        "menu": "Меню"
+      },
+      "icon": {"valid": "Корректная иконка", "searchPlaceholder": "Поиск иконки (напр.: pizza, beef, star)"},
+      "actions": {"add": "Добавить", "delete": "Удалить"},
+      "confirm": {"delete": "Вы уверены, что хотите удалить эту категорию? Все связанные изображения будут удалены."},
+      "alerts": {"createError": "Ошибка создания", "deleteError": "Ошибка удаления", "error": "Ошибка"}
+    },
+    "images": {
+      "heading": "Управление изображениями меню",
+      "labels": {"category": "Категория", "upload": "Загрузить изображение"},
+      "status": {"uploading": "Загрузка..."},
+      "hints": {"selectCategory": "Выберите категорию перед загрузкой."},
+      "empty": {"noCategories": "Нет категорий для выбранного меню."},
+      "actions": {"deleteAria": "Удалить изображение", "delete": "Удалить"}
+    },
+    "gallery": {
+      "heading": "Управление главной галереей",
+      "labels": {"upload": "Загрузить изображение"},
+      "status": {"uploading": "Загрузка..."},
+      "actions": {"deleteAria": "Удалить изображение", "delete": "Удалить"}
+    },
+    "promo": {
+      "heading": "Управление промо-товарами",
+      "labels": {"title": "Название", "price": "Цена", "image": "Изображение"},
+      "placeholders": {"title": "напр.: Семейное ассорти", "price": "напр.: 79 лей"},
+      "actions": {"add": "Добавить", "deleteAria": "Удалить"},
+      "status": {"uploading": "Загрузка..."},
+      "confirm": {"delete": "Вы уверены?"}
+    }
   }
 }

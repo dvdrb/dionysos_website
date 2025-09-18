@@ -1,5 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { Category } from "./DashboardClient"; // Importăm tipul corect
 import * as Icons from "lucide-react";
@@ -15,11 +16,13 @@ export default function CategoriesManager({
   onCreated?: (c: Category) => void;
   onDeleted?: (id: number) => void;
 }) {
+  const t = useTranslations("Dashboard");
   const [categories, setCategories] = useState<Category[]>(
     initialCategories ?? []
   );
   const [nameRO, setNameRO] = useState("");
   const [nameRU, setNameRU] = useState("");
+  const [nameEN, setNameEN] = useState("");
   const [icon, setIcon] = useState("");
   const [showPicker, setShowPicker] = useState(false);
   const [iconQuery, setIconQuery] = useState("");
@@ -49,28 +52,25 @@ export default function CategoriesManager({
       const res = await fetch("/api/admin/categories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name_ro: nameRO, name_ru: nameRU, icon, menu }),
+        body: JSON.stringify({ name_ro: nameRO, name_ru: nameRU, name_en: nameEN, icon, menu }),
       });
       const j = await res.json();
-      if (!res.ok) throw new Error(j?.message || "Eroare la creare");
+      if (!res.ok) throw new Error(j?.message || t("categories.alerts.createError"));
       const item: Category = j.item;
       setCategories([...categories, item]);
       onCreated?.(item);
       setNameRO("");
       setNameRU("");
+      setNameEN("");
       setIcon("");
       router.refresh();
     } catch (err: any) {
-      alert(err?.message || "Eroare");
+      alert(err?.message || t("categories.alerts.error"));
     }
   };
 
   const deleteCategory = async (id: number) => {
-    if (
-      !confirm(
-        "Ești sigur că vrei să ștergi această categorie? Toate imaginile asociate vor fi șterse."
-      )
-    )
+    if (!confirm(t("categories.confirm.delete")))
       return;
     try {
       const res = await fetch("/api/admin/categories", {
@@ -79,20 +79,18 @@ export default function CategoriesManager({
         body: JSON.stringify({ id }),
       });
       const j = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(j?.message || "Eroare la ștergere");
+      if (!res.ok) throw new Error(j?.message || t("categories.alerts.deleteError"));
       setCategories(categories.filter((c) => c.id !== id));
       onDeleted?.(id);
       router.refresh();
     } catch (err: any) {
-      alert(err?.message || "Eroare la ștergere");
+      alert(err?.message || t("categories.alerts.deleteError"));
     }
   };
 
   return (
     <section className="bg-white/70 backdrop-blur rounded-xl shadow-sm ring-1 ring-black/5 p-4 sm:p-6">
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">
-        Gestionează Categoriile
-      </h2>
+      <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">{t("categories.heading")}</h2>
       <form
         onSubmit={addCategory}
         className="mb-6 grid grid-cols-1 sm:grid-cols-4 gap-3"
@@ -102,7 +100,7 @@ export default function CategoriesManager({
             className="block text-sm font-medium text-gray-700"
             htmlFor="cat-name-ro"
           >
-            Nume (RO)
+            {t("categories.labels.name_ro")}
           </label>
           <input
             id="cat-name-ro"
@@ -117,7 +115,7 @@ export default function CategoriesManager({
             className="block text-sm font-medium text-gray-700"
             htmlFor="cat-name-ru"
           >
-            Nume (RU)
+            {t("categories.labels.name_ru")}
           </label>
           <input
             id="cat-name-ru"
@@ -129,16 +127,30 @@ export default function CategoriesManager({
         <div className="col-span-1">
           <label
             className="block text-sm font-medium text-gray-700"
+            htmlFor="cat-name-en"
+          >
+            {t("categories.labels.name_en")}
+          </label>
+          <input
+            id="cat-name-en"
+            value={nameEN}
+            onChange={(e) => setNameEN(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+        <div className="col-span-1">
+          <label
+            className="block text-sm font-medium text-gray-700"
             htmlFor="cat-icon"
           >
-            Icon (lucide-react)
+            {t("categories.labels.icon")}
           </label>
           <div className="mt-1 flex gap-2">
             <input
               id="cat-icon"
               value={icon}
               onChange={(e) => setIcon(e.target.value)}
-              placeholder="ex: Pizza, Beef, Salad"
+              placeholder={t("categories.labels.iconPlaceholder")}
               className="flex-1 rounded-md border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
             />
             <button
@@ -146,7 +158,7 @@ export default function CategoriesManager({
               onClick={() => setShowPicker((s) => !s)}
               className="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-200 ring-1 ring-inset ring-gray-300"
             >
-              {showPicker ? "Ascunde" : "Vezi Iconițe"}
+              {showPicker ? t("categories.labels.iconToggleHide") : t("categories.labels.iconToggleShow")}
             </button>
           </div>
           {icon && icon !== "Icon" && (Icons as any)[icon] && (
@@ -157,13 +169,13 @@ export default function CategoriesManager({
                 }>;
                 return <Cmp className="h-4 w-4" />;
               })()}
-              <span>Icon valid</span>
+              <span>{t("categories.icon.valid")}</span>
             </div>
           )}
         </div>
         <div className="col-span-1">
           <label className="block text-sm font-medium text-gray-700" htmlFor="cat-menu">
-            Menu
+            {t("categories.labels.menu")}
           </label>
           <select
             id="cat-menu"
@@ -183,7 +195,7 @@ export default function CategoriesManager({
             type="submit"
             className="inline-flex w-full sm:w-auto justify-center items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
           >
-            Adaugă
+            {t("categories.actions.add")}
           </button>
         </div>
       </form>
@@ -193,7 +205,7 @@ export default function CategoriesManager({
             <input
               value={iconQuery}
               onChange={(e) => setIconQuery(e.target.value)}
-              placeholder="Caută icon (ex: pizza, beef, star)"
+              placeholder={t("categories.icon.searchPlaceholder")}
               className="w-full rounded-md border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
             />
           </div>
@@ -241,9 +253,9 @@ export default function CategoriesManager({
             <button
               onClick={() => deleteCategory(cat.id)}
               className="inline-flex items-center rounded-md bg-red-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-              aria-label={`Șterge categoria ${cat.name_ro || cat.name}`}
+              aria-label={`${t("categories.actions.delete")} ${cat.name_ro || cat.name}`}
             >
-              Șterge
+              {t("categories.actions.delete")}
             </button>
           </li>
         ))}

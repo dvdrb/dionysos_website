@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const locale = useLocale();
+  const t = useTranslations("Login");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,25 +27,21 @@ export default function LoginPage() {
     if (response.ok) {
       // Dacă login-ul are succes, mergem la dashboard cu prefix de limbă
       router.push(`/${locale}/dashboard`);
-      router.refresh(); // Forțează reîncărcarea pentru a rula middleware-ul
+      router.refresh();
     } else {
       // Dacă nu, afișăm o eroare
       const data = await response.json();
-      setError(data.message || "Date de login incorecte.");
+      setError(data.message || t("error"));
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
       <div className="w-full max-w-sm rounded-xl bg-white/80 backdrop-blur p-6 shadow ring-1 ring-black/5">
-        <h1 className="text-2xl font-semibold mb-6 text-center text-gray-900">
-          Admin Login
-        </h1>
+        <h1 className="text-2xl font-semibold mb-6 text-center text-gray-900">{t("title")}</h1>
         <form onSubmit={handleLogin}>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="username">
-              Username
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="username">{t("username")}</label>
             <input
               type="text"
               id="username"
@@ -55,9 +52,7 @@ export default function LoginPage() {
             />
           </div>
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="password">
-              Password
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="password">{t("password")}</label>
             <input
               type="password"
               id="password"
@@ -72,7 +67,7 @@ export default function LoginPage() {
             type="submit"
             className="w-full rounded-md bg-indigo-600 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
           >
-            Log In
+            {t("submit")}
           </button>
         </form>
       </div>

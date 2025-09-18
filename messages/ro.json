@@ -2,8 +2,8 @@
   "HomePage": {
     "welcomeTo": "Bine ați venit la",
     "location": {
-      "nisporeni": "Restaurant Centru",
-      "varzaresti": "Restaurant Nou"
+      "nisporeni": "Dionysos Taverna",
+      "varzaresti": "Dionysos Sushi"
     },
     "menuButton": "Meniu",
     "gallery": {
@@ -35,5 +35,63 @@
     "mapUrl2": "https://www.google.com/maps?q=str. Chișinăului 2/E, Nisporeni",
     "rights": "Toate drepturile rezervate.",
     "admin": "Admin"
+  },
+  "Login": {
+    "title": "Autentificare Admin",
+    "username": "Utilizator",
+    "password": "Parola",
+    "submit": "Autentificare",
+    "error": "Date de login incorecte."
+  },
+  "Dashboard": {
+    "title": "Panou Admin",
+    "logout": "Deconectare",
+    "menuLabel": "Meniu",
+    "tabs": {
+      "categories": "Categorii",
+      "menu_images": "Imagini meniu",
+      "promo_items": "Promo",
+      "gallery": "Galerie"
+    },
+    "menus": {"taverna": "Taverna", "bar": "Bar", "sushi": "Sushi"},
+    "categories": {
+      "heading": "Gestionează Categoriile",
+      "labels": {
+        "name_ro": "Nume (RO)",
+        "name_ru": "Nume (RU)",
+        "name_en": "Nume (EN)",
+        "icon": "Icon (lucide-react)",
+        "iconPlaceholder": "ex: Pizza, Beef, Salad",
+        "iconToggleShow": "Vezi Iconițe",
+        "iconToggleHide": "Ascunde",
+        "menu": "Meniu"
+      },
+      "icon": {"valid": "Icon valid", "searchPlaceholder": "Caută icon (ex: pizza, beef, star)"},
+      "actions": {"add": "Adaugă", "delete": "Șterge"},
+      "confirm": {"delete": "Ești sigur că vrei să ștergi această categorie? Toate imaginile asociate vor fi șterse."},
+      "alerts": {"createError": "Eroare la creare", "deleteError": "Eroare la ștergere", "error": "Eroare"}
+    },
+    "images": {
+      "heading": "Gestionează Imagini Meniu",
+      "labels": {"category": "Categorie", "upload": "Încarcă imagine"},
+      "status": {"uploading": "Se încarcă..."},
+      "hints": {"selectCategory": "Selectează categoria înainte de a încărca."},
+      "empty": {"noCategories": "Nu există categorii pentru meniul selectat."},
+      "actions": {"deleteAria": "Șterge imaginea", "delete": "Șterge"}
+    },
+    "gallery": {
+      "heading": "Gestionează Galeria Principală",
+      "labels": {"upload": "Încarcă imagine"},
+      "status": {"uploading": "Se încarcă..."},
+      "actions": {"deleteAria": "Șterge imaginea", "delete": "Șterge"}
+    },
+    "promo": {
+      "heading": "Gestionează Produse Promo",
+      "labels": {"title": "Titlu", "price": "Preț", "image": "Imagine"},
+      "placeholders": {"title": "ex: Platou Family", "price": "ex: 79 lei"},
+      "actions": {"add": "Adaugă", "deleteAria": "Șterge"},
+      "status": {"uploading": "Se încarcă..."},
+      "confirm": {"delete": "Ești sigur?"}
+    }
   }
 }

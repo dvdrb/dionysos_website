@@ -2,7 +2,7 @@ import {NextResponse} from "next/server";
 import type {NextRequest} from "next/server";
 
 // Locales supported by the app
-const locales = ["ro", "ru"] as const;
+const locales = ["ro", "ru", "en"] as const;
 type AppLocale = (typeof locales)[number];
 
 function detectLocale(req: NextRequest): AppLocale {
@@ -14,6 +14,7 @@ function detectLocale(req: NextRequest): AppLocale {
 
   // 2) Basic Accept-Language detection (very simple)
   const header = req.headers.get("accept-language") || "";
+  if (/\ben\b/i.test(header)) return "en";
   if (/\bru\b/i.test(header)) return "ru";
   if (/\bro\b/i.test(header)) return "ro";
 

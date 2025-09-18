@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PromoItem } from "./DashboardClient";
+import { useTranslations } from "next-intl";
 
 async function uploadViaApi(file: File, title: string, price: string) {
   const fd = new FormData();
@@ -22,6 +23,7 @@ export default function PromoItemsManager({
 }: {
   initialPromoItems: PromoItem[];
 }) {
+  const t = useTranslations("Dashboard");
   const [items, setItems] = useState(initialPromoItems ?? []);
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
@@ -32,7 +34,7 @@ export default function PromoItemsManager({
   const addItem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!file) {
-      alert("Selectează o imagine.");
+      alert(t("promo.labels.image"));
       return;
     }
     setUploading(true);
@@ -45,14 +47,14 @@ export default function PromoItemsManager({
       router.refresh();
     } catch (error: any) {
       console.error("Upload error (promo)", error);
-      alert(`Eroare la încărcare: ${error?.message || error}.`);
+      alert(`${t("promo.status.uploading")}: ${error?.message || error}.`);
     } finally {
       setUploading(false);
     }
   };
 
   const deleteItem = async (id: number, imageUrl: string) => {
-    if (!confirm("Ești sigur?")) return;
+    if (!confirm(t("promo.confirm.delete"))) return;
     const res = await fetch("/api/admin/promo-items", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
@@ -60,7 +62,7 @@ export default function PromoItemsManager({
     });
     if (!res.ok) {
       const j = await res.json().catch(() => ({}));
-      alert(j?.message || "Eroare la ștergere");
+      alert(j?.message || t("categories.alerts.deleteError"));
       return;
     }
     setItems(items.filter((item) => item.id !== id));
@@ -69,32 +71,32 @@ export default function PromoItemsManager({
 
   return (
     <section className="bg-white/70 backdrop-blur rounded-xl shadow-sm ring-1 ring-black/5 p-4 sm:p-6">
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Gestionează Produse Promo</h2>
+      <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">{t("promo.heading")}</h2>
       <form onSubmit={addItem} className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="col-span-1">
-          <label className="block text-sm font-medium text-gray-700" htmlFor="promo-title">Titlu</label>
+          <label className="block text-sm font-medium text-gray-700" htmlFor="promo-title">{t("promo.labels.title")}</label>
           <input
             id="promo-title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="ex: Platou Family"
+            placeholder={t("promo.placeholders.title")}
             required
             className="mt-1 block w-full rounded-md border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
           />
         </div>
         <div className="col-span-1">
-          <label className="block text-sm font-medium text-gray-700" htmlFor="promo-price">Preț</label>
+          <label className="block text-sm font-medium text-gray-700" htmlFor="promo-price">{t("promo.labels.price")}</label>
           <input
             id="promo-price"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            placeholder="ex: 79 lei"
+            placeholder={t("promo.placeholders.price")}
             required
             className="mt-1 block w-full rounded-md border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
           />
         </div>
         <div className="col-span-1">
-          <label className="block text-sm font-medium text-gray-700">Imagine</label>
+          <label className="block text-sm font-medium text-gray-700">{t("promo.labels.image")}</label>
           <input
             type="file"
             onChange={(e) => setFile(e.target.files?.[0] || null)}
@@ -108,7 +110,7 @@ export default function PromoItemsManager({
             disabled={uploading}
             className="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:opacity-60"
           >
-            {uploading ? "Se încarcă..." : "Adaugă"}
+            {uploading ? t("promo.status.uploading") : t("promo.actions.add")}
           </button>
         </div>
       </form>
@@ -126,8 +128,8 @@ export default function PromoItemsManager({
             <button
               onClick={() => deleteItem(item.id, item.image_url)}
               className="absolute top-1 right-1 rounded-full bg-red-600/90 p-1.5 text-white shadow hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-              aria-label={`Șterge ${item.title}`}
-              title="Șterge"
+              aria-label={`${t("promo.actions.deleteAria")} ${item.title}`}
+              title={t("promo.actions.deleteAria")}
             >
               &times;
             </button>

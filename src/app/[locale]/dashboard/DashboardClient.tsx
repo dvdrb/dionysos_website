@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 
 // Vom crea aceste componente în pașii următori
@@ -16,6 +17,7 @@ export type Category = {
   icon: string | null;
   name_ro?: string | null;
   name_ru?: string | null;
+  name_en?: string | null;
   menu?: string | null;
 };
 export type GalleryImage = {
@@ -44,6 +46,7 @@ type InitialData = {
 };
 
 function LogoutButton() {
+  const t = useTranslations("Dashboard");
   const router = useRouter();
   const handleLogout = async () => {
     await fetch("/api/logout", { method: "POST" });
@@ -54,9 +57,9 @@ function LogoutButton() {
     <button
       onClick={handleLogout}
       className="inline-flex items-center rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
-      aria-label="Logout"
+      aria-label={t("logout")}
     >
-      Logout
+      {t("logout")}
     </button>
   );
 }
@@ -66,6 +69,8 @@ export default function DashboardClient({
 }: {
   initialData: InitialData | undefined | null;
 }) {
+  const t = useTranslations("Dashboard");
+  const locale = useLocale();
   const safeData: InitialData = {
     categories: initialData?.categories ?? [],
     galleryImages: initialData?.galleryImages ?? [],
@@ -75,30 +80,28 @@ export default function DashboardClient({
   const [activeTab, setActiveTab] = useState("categories");
   const [cats, setCats] = useState<Category[]>(safeData.categories);
   const MENUS = [
-    { id: "taverna", label: "Taverna" },
-    { id: "bar", label: "Bar" },
-    { id: "sushi", label: "Sushi" },
+    { id: "taverna", label: t("menus.taverna") },
+    { id: "bar", label: t("menus.bar") },
+    { id: "sushi", label: t("menus.sushi") },
   ] as const;
   const [selectedMenu, setSelectedMenu] = useState<(typeof MENUS)[number]["id"]>(
     "taverna"
   );
 
   const tabs = [
-    { id: "categories", label: "Categorii" },
-    { id: "menu_images", label: "Imagini meniu" },
-    { id: "promo_items", label: "Promo" },
-    { id: "gallery", label: "Galerie" },
+    { id: "categories", label: t("tabs.categories") },
+    { id: "menu_images", label: t("tabs.menu_images") },
+    { id: "promo_items", label: t("tabs.promo_items") },
+    { id: "gallery", label: t("tabs.gallery") },
   ];
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
       <header className="sticky top-0 z-30 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
-          <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
-            Admin Dashboard
-          </h1>
+          <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">{t("title")}</h1>
           <div className="flex items-center gap-2">
-            <label htmlFor="menu-select" className="text-sm text-gray-700">Menu</label>
+            <label htmlFor="menu-select" className="text-sm text-gray-700">{t("menuLabel")}</label>
             <select
               id="menu-select"
               value={selectedMenu}

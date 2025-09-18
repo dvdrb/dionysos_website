@@ -86,16 +86,18 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale = "ro", menu: rawMenu = "taverna" } = await params;
   const menu = rawMenu as string;
-  const menuNames: Record<string, { ro: string; ru: string }> = {
-    taverna: { ro: "Meniu Taverna", ru: "Меню таверны" },
-    bar: { ro: "Bar", ru: "Бар" },
-    sushi: { ro: "Meniu Sushi", ru: "Суши меню" },
+  const menuNames: Record<string, { ro: string; ru: string; en: string }> = {
+    taverna: { ro: "Meniu Taverna", ru: "Меню таверны", en: "Taverna Menu" },
+    bar: { ro: "Bar", ru: "Бар", en: "Bar" },
+    sushi: { ro: "Meniu Sushi", ru: "Суши меню", en: "Sushi Menu" },
   };
-  const title = menuNames[menu]?.[locale as "ro" | "ru"] || menu;
+  const title = menuNames[menu]?.[locale as "ro" | "ru" | "en"] || menu;
   const description =
     locale === "ru"
       ? `Меню (${title}) ресторана Dionysos.`
-      : `Meniul (${title}) restaurantului Dionysos.`;
+      : locale === "en"
+        ? `Dionysos restaurant (${title}) menu.`
+        : `Meniul (${title}) restaurantului Dionysos.`;
   return {
     title,
     description,
@@ -104,6 +106,7 @@ export async function generateMetadata({
       languages: {
         ro: `/ro/menu/${menu}`,
         ru: `/ru/menu/${menu}`,
+        en: `/en/menu/${menu}`,
       },
     },
     openGraph: {

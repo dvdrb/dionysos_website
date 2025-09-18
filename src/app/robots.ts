@@ -14,8 +14,10 @@ export default function robots(): MetadataRoute.Robots {
           "/*?*", // avoid crawling search/query duplicates
           "/ro/login",
           "/ru/login",
+          "/en/login",
           "/ro/dashboard",
           "/ru/dashboard",
+          "/en/dashboard",
         ],
       },
     ],
@@ -23,4 +25,3 @@ export default function robots(): MetadataRoute.Robots {
     host: site,
   };
 }
-

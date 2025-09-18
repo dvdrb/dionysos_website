@@ -1,6 +1,6 @@
 import {getRequestConfig} from "next-intl/server";
 
-export const locales = ["ro", "ru"] as const;
+export const locales = ["ro", "ru", "en"] as const;
 export type AppLocale = (typeof locales)[number];
 
 export async function getMessages(locale: string) {

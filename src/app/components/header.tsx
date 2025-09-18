@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useLocale } from "next-intl";
 import { usePathname } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as Icons from "lucide-react";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -103,10 +103,19 @@ const Header = () => {
   >([]);
   const [loadingCats, setLoadingCats] = useState(false);
   const [catsError, setCatsError] = useState<string | null>(null);
+  const [isLangOpen, setIsLangOpen] = useState(false);
+  const langBtnRef = useRef<HTMLButtonElement | null>(null);
+  const langMenuRef = useRef<HTMLDivElement | null>(null);
+
+  const languages = [
+    { code: "ro", label: "RO" },
+    { code: "ru", label: "RU" },
+    { code: "en", label: "EN" },
+  ] as const;
 
   const switchTo = (target: string) => {
     const path = pathname || "/";
-    const replaced = path.replace(/^\/(ro|ru)(?=\/|$)/, `/${target}`);
+    const replaced = path.replace(/^\/(ro|ru|en)(?=\/|$)/, `/${target}`);
     // If no locale prefix was present, add it
     return replaced === path
       ? `/${target}${path === "/" ? "" : path}`
@@ -116,6 +125,29 @@ const Header = () => {
   const toggleSidePanel = () => {
     setIsSidePanelOpen(!isSidePanelOpen);
   };
+
+  // Close language dropdown on outside click or Escape
+  useEffect(() => {
+    function onDocClick(e: MouseEvent) {
+      const target = e.target as Node;
+      if (
+        isLangOpen &&
+        !langBtnRef.current?.contains(target) &&
+        !langMenuRef.current?.contains(target)
+      ) {
+        setIsLangOpen(false);
+      }
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setIsLangOpen(false);
+    }
+    document.addEventListener("click", onDocClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("click", onDocClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [isLangOpen]);
 
   useEffect(() => {
     let cancelled = false;
@@ -228,32 +260,43 @@ const Header = () => {
             </Link>
           </div>
 
-          {/* Language Selector */}
-          <div className="flex items-center  py-2 pl-2">
-            <Globe className="w-5 h-5 md:w-6 md:h-6 text-gray-300" />
-            <div className="flex items-center text-gray-300 text-sm md:text-base font-light">
-              <Link
-                href={switchTo("ro")}
-                className={`px-2 py-1 rounded  ${
-                  locale === "ro"
-                    ? "hidden bg-white text-black"
-                    : "hover:underline"
-                }`}
+          {/* Language Selector (Dropdown) */}
+          <div className="relative flex items-center py-2 pl-2">
+            <Globe className="w-5 h-5 md:w-6 md:h-6 text-gray-300 mr-1" />
+            <button
+              ref={langBtnRef}
+              onClick={() => setIsLangOpen((v) => !v)}
+              aria-haspopup="listbox"
+              aria-expanded={isLangOpen}
+              className="flex items-center gap-1 px-2 py-1 text-gray-200 hover:text-white hover:bg-white/10 rounded"
+            >
+              <span className="text-sm md:text-base font-light uppercase">{locale}</span>
+              <svg className={`w-3 h-3 transition-transform ${isLangOpen ? "rotate-180" : "rotate-0"}`} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.25 8.29a.75.75 0 01-.02-1.08z" clipRule="evenodd" />
+              </svg>
+            </button>
+            {isLangOpen && (
+              <div
+                ref={langMenuRef}
+                className="absolute right-0 top-full mt-2 w-28 rounded-md bg-white shadow-lg ring-1 ring-black/5 z-50"
+                role="listbox"
               >
-                RO
-              </Link>
-
-              <Link
-                href={switchTo("ru")}
-                className={`px-2 py-1 rounded ${
-                  locale === "ru"
-                    ? "hidden bg-white text-black"
-                    : "hover:underline"
-                }`}
-              >
-                RU
-              </Link>
-            </div>
+                {languages.map((lng) => (
+                  <Link
+                    key={lng.code}
+                    href={switchTo(lng.code)}
+                    className={`block px-3 py-2 text-sm ${
+                      lng.code === locale ? "bg-gray-100 text-gray-900" : "text-gray-700 hover:bg-gray-50"
+                    }`}
+                    onClick={() => setIsLangOpen(false)}
+                    role="option"
+                    aria-selected={lng.code === locale}
+                  >
+                    {lng.label}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </header>

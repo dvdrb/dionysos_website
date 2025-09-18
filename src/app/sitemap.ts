@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const locales = ["ro", "ru"] as const;
+const locales = ["ro", "ru", "en"] as const;
 const menus = ["taverna", "bar", "sushi"] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {

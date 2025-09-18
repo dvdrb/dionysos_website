@@ -25,7 +25,7 @@ export async function POST(request: Request) {
 
   const body = await request.json().catch(() => null);
   if (!body) return NextResponse.json({ message: "Invalid body" }, { status: 400 });
-  const { name_ro, name_ru, icon, menu } = body;
+  const { name_ro, name_ru, name_en, icon, menu } = body;
   const ALLOWED_MENUS = new Set(["taverna", "bar", "sushi"]);
 
   // Prefer ro as base name if available
@@ -49,6 +49,7 @@ export async function POST(request: Request) {
   if (name_ro) insertObj.name_ro = name_ro;
   if (name_ru) insertObj.name_ru = name_ru;
   if (menu) insertObj.menu = menu;
+  if (name_en) insertObj.name_en = name_en;
 
   let data, error;
   ({ data, error } = await supabaseAdmin

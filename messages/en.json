@@ -1,0 +1,97 @@
+{
+  "HomePage": {
+    "welcomeTo": "Welcome to",
+    "location": {
+      "nisporeni": "Dionysos Taverna",
+      "varzaresti": "Dionysos Sushi"
+    },
+    "menuButton": "Menu",
+    "gallery": {
+      "label": "Gallery"
+    },
+    "about": {
+      "label": "About",
+      "body": "Welcome to Dionysos restaurant, where every guest becomes part of our family. The restaurant is present in two cozy locations where you can enjoy a refined atmosphere and the splendor of culinary dishes."
+    },
+    "taste": "Taste",
+    "now": "Now",
+    "nav": {
+      "prev": "Back",
+      "next": "Next"
+    },
+    "modal": {
+      "bar": "Bar",
+      "taverna": "Taverna Menu",
+      "sushi": "Sushi Menu"
+    }
+  },
+  "Footer": {
+    "heading": "Contacts",
+    "address1": "str. Suveranității 3 , Nisporeni",
+    "address2": "str. Chișinăului 2/E, Nisporeni",
+    "phone1": "0681 18 111",
+    "phone2": "0 69 993755",
+    "mapUrl1": "https://www.google.com/maps/place/Pizza+al+forno,+Strada+Suveranitatii,+MD-6401,+Nisporeni,+Moldova/@47.0800436,28.1853951,16z/data=!4m6!3m5!1s0x40ca4bb579e2f7ff:0xa4559e97c94b950f!8m2!3d47.0800436!4d28.1853951!16s%2Fg%2F11g0j0b9mx",
+    "mapUrl2": "https://www.google.com/maps?q=str. Chișinăului 2/E, Nisporeni",
+    "rights": "All rights reserved.",
+    "admin": "Admin"
+  },
+  "Login": {
+    "title": "Admin Login",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Log In",
+    "error": "Incorrect login details."
+  },
+  "Dashboard": {
+    "title": "Admin Dashboard",
+    "logout": "Logout",
+    "menuLabel": "Menu",
+    "tabs": {
+      "categories": "Categories",
+      "menu_images": "Menu Images",
+      "promo_items": "Promo",
+      "gallery": "Gallery"
+    },
+    "menus": {"taverna": "Taverna", "bar": "Bar", "sushi": "Sushi"},
+    "categories": {
+      "heading": "Manage Categories",
+      "labels": {
+        "name_ro": "Name (RO)",
+        "name_ru": "Name (RU)",
+        "name_en": "Name (EN)",
+        "icon": "Icon (lucide-react)",
+        "iconPlaceholder": "e.g., Pizza, Beef, Salad",
+        "iconToggleShow": "Show Icons",
+        "iconToggleHide": "Hide",
+        "menu": "Menu"
+      },
+      "icon": {"valid": "Valid icon", "searchPlaceholder": "Search icon (e.g., pizza, beef, star)"},
+      "actions": {"add": "Add", "delete": "Delete"},
+      "confirm": {"delete": "Are you sure you want to delete this category? All associated images will be deleted."},
+      "alerts": {"createError": "Create error", "deleteError": "Delete error", "error": "Error"}
+    },
+    "images": {
+      "heading": "Manage Menu Images",
+      "labels": {"category": "Category", "upload": "Upload image"},
+      "status": {"uploading": "Uploading..."},
+      "hints": {"selectCategory": "Select a category before uploading."},
+      "empty": {"noCategories": "No categories for the selected menu."},
+      "actions": {"deleteAria": "Delete image", "delete": "Delete"}
+    },
+    "gallery": {
+      "heading": "Manage Main Gallery",
+      "labels": {"upload": "Upload image"},
+      "status": {"uploading": "Uploading..."},
+      "actions": {"deleteAria": "Delete image", "delete": "Delete"}
+    },
+    "promo": {
+      "heading": "Manage Promo Items",
+      "labels": {"title": "Title", "price": "Price", "image": "Image"},
+      "placeholders": {"title": "e.g., Family Platter", "price": "e.g., 79 lei"},
+      "actions": {"add": "Add", "deleteAria": "Delete"},
+      "status": {"uploading": "Uploading..."},
+      "confirm": {"delete": "Are you sure?"}
+    }
+  }
+}

@@ -47,10 +47,12 @@ export async function generateMetadata({
   const titles: Record<string, string> = {
     ro: "Dionysos – Restaurant în orașul Nisporeni",
     ru: "Dionysos – Ресторан в городе Ниспорены",
+    en: "Dionysos – Restaurant in Nisporeni",
   };
   const descriptions: Record<string, string> = {
     ro: "Preparate proaspete, atmosferă primitoare. Vezi meniul și galeria restaurantului Dionysos.",
     ru: "Свежие блюда и уютная атмосфера. Ознакомьтесь с меню и галереей ресторана Dionysos.",
+    en: "Fresh dishes and a welcoming atmosphere. Explore Dionysos restaurant's menu and gallery.",
   };
   const currentTitle = titles[locale] ?? titles.ro;
   const currentDesc = descriptions[locale] ?? descriptions.ro;
@@ -63,6 +65,7 @@ export async function generateMetadata({
       languages: {
         ro: "/ro",
         ru: "/ru",
+        en: "/en",
       },
     },
     openGraph: {
