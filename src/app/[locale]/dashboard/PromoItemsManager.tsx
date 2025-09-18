@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PromoItem } from "./DashboardClient";
 import { useTranslations } from "next-intl";
+import { supabase } from "@/lib/supabaseClient";
+import { BUCKET_MENU } from "@/lib/storage";
 
 async function uploadViaApi(file: File, title: string, price: string) {
   const fd = new FormData();
@@ -12,9 +14,44 @@ async function uploadViaApi(file: File, title: string, price: string) {
   const res = await fetch("/api/admin/promo-items", { method: "POST", body: fd });
   if (!res.ok) {
     const j = await res.json().catch(() => ({}));
-    throw new Error(j?.error || j?.message || `Upload failed (${res.status})`);
+    const err: any = new Error(j?.error || j?.message || `Upload failed (${res.status})`);
+    (err.status = res.status);
+    throw err;
   }
   const j = await res.json();
+  return j.item as PromoItem;
+}
+
+async function uploadWithSignedUrl(file: File, title: string, price: string) {
+  const signRes = await fetch("/api/admin/promo-items/sign", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ filename: file.name, contentType: file.type }),
+  });
+  if (!signRes.ok) {
+    const j = await signRes.json().catch(() => ({}));
+    throw new Error(j?.message || `Failed to get signed URL (${signRes.status})`);
+  }
+  const { path, token } = await signRes.json();
+
+  const upRes = await supabase.storage
+    .from(BUCKET_MENU)
+    // @ts-ignore
+    .uploadToSignedUrl(path, token, file);
+  if ((upRes as any)?.error) {
+    throw new Error((upRes as any).error?.message || "Signed upload failed");
+  }
+
+  const completeRes = await fetch("/api/admin/promo-items/complete", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ path, title, price }),
+  });
+  if (!completeRes.ok) {
+    const j = await completeRes.json().catch(() => ({}));
+    throw new Error(j?.message || `DB insert failed (${completeRes.status})`);
+  }
+  const j = await completeRes.json();
   return j.item as PromoItem;
 }
 
@@ -39,7 +76,16 @@ export default function PromoItemsManager({
     }
     setUploading(true);
     try {
-      const item = await uploadViaApi(file, title, price);
+      let item: PromoItem;
+      try {
+        item = await uploadViaApi(file, title, price);
+      } catch (err: any) {
+        if (err?.status === 413) {
+          item = await uploadWithSignedUrl(file, title, price);
+        } else {
+          throw err;
+        }
+      }
       if (item) setItems([item, ...items]);
       setTitle("");
       setPrice("");

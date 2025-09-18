@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MenuImage, Category } from "./DashboardClient";
 import { supabase } from "@/lib/supabaseClient";
+import { BUCKET_MENU } from "@/lib/storage";
 import { useTranslations } from "next-intl";
 
 async function uploadViaApi(file: File, categoryId: string, alt?: string) {
@@ -34,7 +35,7 @@ async function uploadWithSignedUrl(file: File, categoryId: string, alt?: string)
   const { path, token } = await signRes.json();
 
   const upRes = await supabase.storage
-    .from("menu")
+    .from(BUCKET_MENU)
     // @ts-ignore
     .uploadToSignedUrl(path, token, file);
   if ((upRes as any)?.error) {
