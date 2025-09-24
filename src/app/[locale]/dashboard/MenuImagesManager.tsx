@@ -6,21 +6,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { BUCKET_MENU } from "@/lib/storage";
 import { useTranslations } from "next-intl";
 
-async function uploadViaApi(file: File, categoryId: string, alt?: string) {
-  const fd = new FormData();
-  fd.set("file", file);
-  fd.set("category_id", categoryId);
-  if (alt) fd.set("alt_text", alt);
-  const res = await fetch("/api/admin/menu-images", { method: "POST", body: fd });
-  if (!res.ok) {
-    const j = await res.json().catch(() => ({}));
-    const err: any = new Error(j?.error || j?.message || `Upload failed (${res.status})`);
-    (err.status = res.status);
-    throw err;
-  }
-  const j = await res.json();
-  return j.item as MenuImage;
-}
+// Uploads use signed-URL flow to keep serverless bundles lean
 
 async function uploadWithSignedUrl(file: File, categoryId: string, alt?: string) {
   const signRes = await fetch("/api/admin/menu-images/sign", {
@@ -98,16 +84,7 @@ export default function MenuImagesManager({
       const uploaded: MenuImage[] = [];
       for (const file of files) {
         try {
-          let item: MenuImage;
-          try {
-            item = await uploadViaApi(file, selectedCategory, file.name);
-          } catch (err: any) {
-            if (err?.status === 413) {
-              item = await uploadWithSignedUrl(file, selectedCategory, file.name);
-            } else {
-              throw err;
-            }
-          }
+          const item = await uploadWithSignedUrl(file, selectedCategory, file.name);
           uploaded.push(item);
         } catch (err: any) {
           console.error("Upload error (menu)", err);

@@ -6,22 +6,6 @@ import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabaseClient";
 import { BUCKET_MENU } from "@/lib/storage";
 
-async function uploadViaApi(file: File, title: string, price: string) {
-  const fd = new FormData();
-  fd.set("file", file);
-  fd.set("title", title);
-  fd.set("price", price);
-  const res = await fetch("/api/admin/promo-items", { method: "POST", body: fd });
-  if (!res.ok) {
-    const j = await res.json().catch(() => ({}));
-    const err: any = new Error(j?.error || j?.message || `Upload failed (${res.status})`);
-    (err.status = res.status);
-    throw err;
-  }
-  const j = await res.json();
-  return j.item as PromoItem;
-}
-
 async function uploadWithSignedUrl(file: File, title: string, price: string) {
   const signRes = await fetch("/api/admin/promo-items/sign", {
     method: "POST",
@@ -76,16 +60,7 @@ export default function PromoItemsManager({
     }
     setUploading(true);
     try {
-      let item: PromoItem;
-      try {
-        item = await uploadViaApi(file, title, price);
-      } catch (err: any) {
-        if (err?.status === 413) {
-          item = await uploadWithSignedUrl(file, title, price);
-        } else {
-          throw err;
-        }
-      }
+      const item = await uploadWithSignedUrl(file, title, price);
       if (item) setItems([item, ...items]);
       setTitle("");
       setPrice("");
