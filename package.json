@@ -7,7 +7,10 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "biome check",
-    "format": "biome format --write"
+    "format": "biome format --write",
+    "convert:webp": "node scripts/convert_storage_images_to_webp.js",
+    "mirror:public": "node scripts/mirror_storage_to_public.js",
+    "cleanup:nonwebp": "node scripts/cleanup_non_webp.js"
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",
@@ -27,6 +30,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "sharp": "^0.34.4",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

@@ -70,8 +70,21 @@ export default async function RootLayout({
 }) {
   const cookieStore = await cookies();
   const detectedLang = cookieStore.get("NEXT_LOCALE")?.value || "ro";
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  let supabaseHost: string | null = null;
+  try {
+    if (supabaseUrl) supabaseHost = new URL(supabaseUrl).hostname;
+  } catch {}
   return (
     <html lang={detectedLang}>
+      <head>
+        {supabaseHost ? (
+          <>
+            <link rel="preconnect" href={`https://${supabaseHost}`} crossOrigin="" />
+            <link rel="dns-prefetch" href={`https://${supabaseHost}`} />
+          </>
+        ) : null}
+      </head>
       <body className={`${inter.className} ${inter.variable}`}>{children}</body>
     </html>
   );

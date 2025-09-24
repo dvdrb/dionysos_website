@@ -47,6 +47,7 @@ export async function POST(request: Request) {
     .upload(fileName, Buffer.from(arrayBuffer), {
       contentType: file.type || "application/octet-stream",
       upsert: false,
+      cacheControl: "31536000",
     });
   if (upErr) {
     return NextResponse.json(

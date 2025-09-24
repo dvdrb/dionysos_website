@@ -1,10 +1,28 @@
-// src/app/[locale]/menu/MenuClient.tsx
-
 "use client";
 
 import React, { useState, useEffect } from "react";
 import Script from "next/script";
 import { useLocale } from "next-intl";
+import Image from "next/image";
+
+// Map Supabase public storage URLs to a local-first route (/images/<bucket>/<path>)
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+let SUPABASE_HOST: string | null = null;
+try {
+  if (SUPABASE_URL) SUPABASE_HOST = new URL(SUPABASE_URL).hostname;
+} catch {}
+function optimizeUrl(url: string) {
+  try {
+    const u = new URL(url);
+    if (!SUPABASE_HOST || u.hostname !== SUPABASE_HOST) return url;
+    const objPrefix = "/storage/v1/object/public/";
+    if (!u.pathname.startsWith(objPrefix)) return url;
+    const pathRest = u.pathname.slice(objPrefix.length); // `${bucket}/...`
+    return `/images/${pathRest}`;
+  } catch {
+    return url;
+  }
+}
 
 // --- TIPURI ---
 // Aceste tipuri trebuie să corespundă cu datele pe care le vom primi
@@ -63,23 +81,34 @@ const CategoryNav = ({
 );
 
 // MenuSection (componenta pentru afișarea imaginilor dintr-o categorie)
-type MenuSectionProps = { id: string; items: MenuImageType[] };
-const MenuSection = ({ id, items }: MenuSectionProps) => (
-  <section id={id} className="scroll-mt-20">
-    <div className="container mx-auto px-2 sm:px-4">
-      <div className="flex flex-col items-center ">
-        {items.map((item) => (
-          <img
-            key={item.id}
-            src={item.image_url}
-            alt={item.alt_text ?? ""}
-            className="w-full max-w-3xl shadow-lg"
-          />
-        ))}
+type MenuSectionProps = {
+  id: string;
+  items: MenuImageType[];
+  sectionIndex: number;
+};
+const MenuSection = ({ id, items, sectionIndex }: MenuSectionProps) => {
+  return (
+    <section id={id} className="scroll-mt-20">
+      <div className="container mx-auto px-2 sm:px-4">
+        <div className="flex flex-col items-center gap-0">
+          {items.map((item, itemIndex) => {
+            const isPriority = sectionIndex === 0 && itemIndex === 0;
+            const src = optimizeUrl(item.image_url);
+            return (
+              <img
+                key={item.id}
+                src={src}
+                alt={item.alt_text ?? ""}
+                loading={isPriority ? "eager" : "lazy"}
+                className="block w-full max-w-3xl select-none"
+              />
+            );
+          })}
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 // --- COMPONENTA PRINCIPALĂ CLIENT ---
 export default function MenuClient({ sections }: { sections: SectionType[] }) {
@@ -207,7 +236,11 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
       <main>
         {sections.map((section, index) => (
           <React.Fragment key={section.id}>
-            <MenuSection id={section.id} items={section.items} />
+            <MenuSection
+              id={section.id}
+              items={section.items.map((it) => ({ ...it, image_url: optimizeUrl(it.image_url) }))}
+              sectionIndex={index}
+            />
           </React.Fragment>
         ))}
       </main>

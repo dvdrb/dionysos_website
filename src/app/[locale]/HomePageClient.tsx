@@ -60,6 +60,25 @@ export default function HomePageClient({
   const t = useTranslations("HomePage");
   const router = useRouter();
 
+  // Optimize Supabase public storage URLs via the render endpoint
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+  let supabaseHost: string | null = null;
+  try {
+    if (supabaseUrl) supabaseHost = new URL(supabaseUrl).hostname;
+  } catch {}
+  const optimizeUrl = (url: string) => {
+    try {
+      const u = new URL(url);
+      if (!supabaseHost || u.hostname !== supabaseHost) return url;
+      const objPrefix = "/storage/v1/object/public/";
+      if (!u.pathname.startsWith(objPrefix)) return url;
+      const pathRest = u.pathname.slice(objPrefix.length); // `${bucket}/...`
+      return `/images/${pathRest}`;
+    } catch {
+      return url;
+    }
+  };
+
   // Hook-uri pentru a conecta navigația externă (rămân la fel)
   useEffect(() => {
     const swiper = gallerySwiperRef.current;
@@ -270,13 +289,18 @@ export default function HomePageClient({
             {galleryImgs.map((img) => (
               <SwiperSlide key={img.id} className="!h-auto">
                 <div className="relative aspect-[16/9] w-full max-w-[340px] sm:max-w-[380px] md:max-w-[420px] mx-auto overflow-hidden rounded-lg">
-                  <Image
-                    src={img.image_url}
-                    alt={img.alt_text ?? `Galerie ${img.id}`}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 380px, 420px"
-                    className="object-cover"
-                  />
+                  {(() => {
+                    const src = optimizeUrl(img.image_url);
+                    return (
+                    <Image
+                      src={src}
+                      alt={img.alt_text ?? `Galerie ${img.id}`}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 380px, 420px"
+                      className="object-cover"
+                    />
+                    );
+                  })()}
                 </div>
               </SwiperSlide>
             ))}
@@ -337,7 +361,7 @@ export default function HomePageClient({
                 <MenuCard
                   title={item.title}
                   price={item.price}
-                  img={item.image_url}
+                  img={optimizeUrl(item.image_url)}
                 />
               </SwiperSlide>
             ))}
