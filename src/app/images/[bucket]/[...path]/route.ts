@@ -1,6 +1,4 @@
 import { NextResponse } from "next/server";
-import { stat, readFile } from "node:fs/promises";
-import { join } from "node:path";
 
 export const runtime = "nodejs";
 
@@ -19,40 +17,42 @@ export async function GET(
 ) {
   const { bucket, path: parts } = await ctx.params;
   const relPath = parts.join("/");
-  const localPath = join(process.cwd(), "public", bucket, relPath);
 
+  // Try to fetch the static asset served from /public directly to avoid fs in serverless
   try {
-    await stat(localPath);
-    const data = await readFile(localPath); // Buffer
-    const uint8 = new Uint8Array(data); // Ensure BodyInit is BufferSource (no SharedArrayBuffer type)
-    return new NextResponse(uint8, {
-      status: 200,
-      headers: {
-        "Content-Type": contentType(localPath),
-        "Cache-Control": "public, max-age=31536000, immutable",
-      },
-    });
-  } catch {
-    // Fallback: proxy from Supabase public storage
-    const base = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "";
-    if (!base) return NextResponse.json({ message: "Missing SUPABASE_URL" }, { status: 500 });
-    const url = `${base.replace(/\/$/, "")}/storage/v1/object/public/${bucket}/${relPath}`;
-    try {
-      const resp = await fetch(url, {
-        headers: { "Cache-Control": "public, max-age=86400" },
-        // Rely on Supabase caching; we just stream
-      });
-      if (!resp.ok) return NextResponse.json({ message: `Upstream ${resp.status}` }, { status: resp.status });
+    const u = new URL(request.url);
+    const staticUrl = `${u.origin}/${bucket}/${relPath}`;
+    const resp = await fetch(staticUrl, { cache: "force-cache" });
+    if (resp.ok) {
       const body = await resp.arrayBuffer();
       return new NextResponse(body, {
         status: 200,
         headers: {
-          "Content-Type": contentType(url),
-          "Cache-Control": "public, max-age=86400",
+          "Content-Type": contentType(staticUrl),
+          "Cache-Control": "public, max-age=31536000, immutable",
         },
       });
-    } catch (e: any) {
-      return NextResponse.json({ message: e?.message || "Proxy failed" }, { status: 500 });
     }
+  } catch {}
+
+  // Fallback: proxy from Supabase public storage
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "";
+  if (!base) return NextResponse.json({ message: "Missing SUPABASE_URL" }, { status: 500 });
+  const url = `${base.replace(/\/$/, "")}/storage/v1/object/public/${bucket}/${relPath}`;
+  try {
+    const resp = await fetch(url, {
+      headers: { "Cache-Control": "public, max-age=86400" },
+    });
+    if (!resp.ok) return NextResponse.json({ message: `Upstream ${resp.status}` }, { status: resp.status });
+    const body = await resp.arrayBuffer();
+    return new NextResponse(body, {
+      status: 200,
+      headers: {
+        "Content-Type": contentType(url),
+        "Cache-Control": "public, max-age=86400",
+      },
+    });
+  } catch (e: any) {
+    return NextResponse.json({ message: e?.message || "Proxy failed" }, { status: 500 });
   }
 }

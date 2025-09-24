@@ -14,6 +14,7 @@ const MENUS = [
 type MenuSlug = (typeof MENUS)[number];
 
 const IMG_EXT = new Set([".webp", ".jpg", ".jpeg", ".png", ".gif"]);
+const USE_LOCAL_MENU = process.env.NEXT_PUBLIC_LOCAL_MENU === "1" || process.env.LOCAL_MENU === "1";
 
 function slugify(input: string) {
   const s = String(input)
@@ -86,33 +87,35 @@ function compareSlugs(a: string, b: string): number {
 
 async function getMenuData(locale: string, menu: string) {
   // 1) If there are local category folders with images, use ONLY local
-  const menuBase = path.join(process.cwd(), "public", "menu", menu);
-  let localOnlySections: SectionType[] = [];
-  try {
-    const catDirs = await fs.readdir(menuBase, { withFileTypes: true });
-    const localCats: string[] = [];
-    for (const dir of catDirs) {
-      if (!dir.isDirectory()) continue;
-      const files = await listLocalCategory(menu, dir.name);
-      if (files.length > 0) localCats.push(dir.name);
-    }
-    if (localCats.length > 0) {
-      for (const folderSlug of localCats.sort(compareSlugs)) {
-        const localFiles = await listLocalCategory(menu, folderSlug);
-        const items = localFiles
-          .map((f, idx) => ({ id: -300000 - idx, image_url: f.url, alt_text: f.file }))
-          .sort(compareItems);
-        const displaySlug = stripOrderPrefix(folderSlug);
-        const friendly = displaySlug
-          .split("-")
-          .filter(Boolean)
-          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-          .join(" ");
-        localOnlySections.push({ id: displaySlug, name: friendly || displaySlug, items });
+  if (USE_LOCAL_MENU) {
+    const menuBase = path.join(process.cwd(), "public", "menu", menu);
+    let localOnlySections: SectionType[] = [];
+    try {
+      const catDirs = await fs.readdir(menuBase, { withFileTypes: true });
+      const localCats: string[] = [];
+      for (const dir of catDirs) {
+        if (!dir.isDirectory()) continue;
+        const files = await listLocalCategory(menu, dir.name);
+        if (files.length > 0) localCats.push(dir.name);
       }
-      return localOnlySections;
-    }
-  } catch {}
+      if (localCats.length > 0) {
+        for (const folderSlug of localCats.sort(compareSlugs)) {
+          const localFiles = await listLocalCategory(menu, folderSlug);
+          const items = localFiles
+            .map((f, idx) => ({ id: -300000 - idx, image_url: f.url, alt_text: f.file }))
+            .sort(compareItems);
+          const displaySlug = stripOrderPrefix(folderSlug);
+          const friendly = displaySlug
+            .split("-")
+            .filter(Boolean)
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(" ");
+          localOnlySections.push({ id: displaySlug, name: friendly || displaySlug, items });
+        }
+        return localOnlySections;
+      }
+    } catch {}
+  }
 
   // 2) Otherwise, fall back to DB categories (local-first per category) and include local-only leftover folders
   // Try to filter by a 'menu' column on categories; if column missing, fall back to all
@@ -190,28 +193,30 @@ async function getMenuData(locale: string, menu: string) {
   // Only categories with at least 1 image are kept
   // (either from local files or DB)
   // Additionally, include any local-only category folders not present in DB
-  const menuBase2 = path.join(process.cwd(), "public", "menu", menu);
-  try {
-    const entries = await fs.readdir(menuBase2, { withFileTypes: true });
-    const folderSlugs = entries.filter((e) => e.isDirectory()).map((e) => e.name).sort(compareSlugs);
-    for (const folderSlug of folderSlugs) {
-      if (presentSlugs.has(folderSlug)) continue; // already included via DB category
-      const localFiles = await listLocalCategory(menu, folderSlug);
-      if (localFiles.length === 0) continue;
-      const items = localFiles
-        .map((f, idx) => ({ id: -200000 - idx, image_url: f.url, alt_text: f.file }))
-        .sort(compareItems);
-      // Friendly name from slug: kebab-case -> Title Case
-      const displaySlug = stripOrderPrefix(folderSlug);
-      const friendly = displaySlug
-        .split("-")
-        .filter(Boolean)
-        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(" ");
-      sections.push({ id: displaySlug, name: friendly || displaySlug, items });
-      presentSlugs.add(displaySlug);
-    }
-  } catch {}
+  if (USE_LOCAL_MENU) {
+    const menuBase2 = path.join(process.cwd(), "public", "menu", menu);
+    try {
+      const entries = await fs.readdir(menuBase2, { withFileTypes: true });
+      const folderSlugs = entries.filter((e) => e.isDirectory()).map((e) => e.name).sort(compareSlugs);
+      for (const folderSlug of folderSlugs) {
+        if (presentSlugs.has(folderSlug)) continue; // already included via DB category
+        const localFiles = await listLocalCategory(menu, folderSlug);
+        if (localFiles.length === 0) continue;
+        const items = localFiles
+          .map((f, idx) => ({ id: -200000 - idx, image_url: f.url, alt_text: f.file }))
+          .sort(compareItems);
+        // Friendly name from slug: kebab-case -> Title Case
+        const displaySlug = stripOrderPrefix(folderSlug);
+        const friendly = displaySlug
+          .split("-")
+          .filter(Boolean)
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" ");
+        sections.push({ id: displaySlug, name: friendly || displaySlug, items });
+        presentSlugs.add(displaySlug);
+      }
+    } catch {}
+  }
 
   return sections;
 }
