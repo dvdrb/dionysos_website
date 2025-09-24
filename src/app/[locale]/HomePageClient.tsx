@@ -456,7 +456,7 @@ function MenuCard({
           alt={title}
           fill
           sizes="(max-width: 640px) 86vw, (max-width: 768px) 70vw, (max-width: 1024px) 52vw, 460px"
-          loading="eager"
+          loading="lazy"
           className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />

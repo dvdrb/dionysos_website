@@ -15,6 +15,7 @@
   "dependencies": {
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.57.4",
+    "sharp": "^0.34.4",
     "framer-motion": "^12.23.12",
     "i18n": "^0.15.1",
     "lucide-react": "^0.543.0",
@@ -30,7 +31,6 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "sharp": "^0.34.4",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

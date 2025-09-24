@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { Buffer } from "node:buffer";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { BUCKET_MENU } from "@/lib/storage";
+import sharp from "sharp";
 
 export const runtime = "nodejs";
 
@@ -39,13 +40,25 @@ export async function POST(request: Request) {
     );
   }
 
-  const ext = file.name.split(".").pop();
-  const fileName = `${crypto.randomUUID()}.${ext || "bin"}`;
+  const baseName = crypto.randomUUID();
   const arrayBuffer = await file.arrayBuffer();
+  let webp: Buffer;
+  try {
+    webp = await sharp(Buffer.from(arrayBuffer))
+      .resize({ width: 1600, withoutEnlargement: true })
+      .webp({ quality: 80 })
+      .toBuffer();
+  } catch (e: any) {
+    return NextResponse.json(
+      { message: "Image processing failed", error: e?.message || String(e) },
+      { status: 500 }
+    );
+  }
+  const fileName = `${baseName}.webp`;
   const { error: upErr } = await supabaseAdmin.storage
     .from(BUCKET_MENU)
-    .upload(fileName, Buffer.from(arrayBuffer), {
-      contentType: file.type || "application/octet-stream",
+    .upload(fileName, webp, {
+      contentType: "image/webp",
       upsert: false,
       cacheControl: "31536000",
     });
