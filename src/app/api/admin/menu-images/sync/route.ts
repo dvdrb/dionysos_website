@@ -34,6 +34,7 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
+  const admin = supabaseAdmin!;
 
   const body = await request.json().catch(() => null);
   const menu = (body?.menu as string | undefined) || "";
@@ -42,7 +43,7 @@ export async function POST(request: Request) {
   }
 
   // Fetch categories for the selected menu
-  const { data: categories, error: catErr } = await supabaseAdmin
+  const { data: categories, error: catErr } = await admin
     .from("categories")
     .select("id,name,name_ro")
     .eq("menu", menu);
@@ -61,7 +62,7 @@ export async function POST(request: Request) {
 
   // Helper to list a folder in storage
   async function listFolder(path: string) {
-    const { data, error } = await supabaseAdmin.storage
+    const { data, error } = await admin.storage
       .from(BUCKET_MENU)
       .list(path, { limit: 1000, offset: 0 });
     if (error) throw error;
@@ -94,7 +95,7 @@ export async function POST(request: Request) {
   // Get public URLs
   const urlByPath = new Map<string, string>();
   for (const { path } of paths) {
-    const { data } = supabaseAdmin.storage.from(BUCKET_MENU).getPublicUrl(path);
+    const { data } = admin.storage.from(BUCKET_MENU).getPublicUrl(path);
     urlByPath.set(path, data.publicUrl);
   }
   const urls = Array.from(urlByPath.values());
@@ -102,7 +103,7 @@ export async function POST(request: Request) {
   // Load existing rows for these URLs
   const existingMap = new Map<string, { id: number; category_id: number }>();
   if (urls.length > 0) {
-    const { data: existing } = await supabaseAdmin
+    const { data: existing } = await admin
       .from("menu_images")
       .select("id,image_url,category_id")
       .in("image_url", urls);
@@ -129,7 +130,7 @@ export async function POST(request: Request) {
   const results: any = { inserted: 0, updated: 0 };
 
   if (toInsert.length > 0) {
-    const { error } = await supabaseAdmin.from("menu_images").insert(toInsert);
+    const { error } = await admin.from("menu_images").insert(toInsert);
     if (error) {
       return NextResponse.json(
         { message: "Failed to insert new rows", error: error.message },
@@ -140,7 +141,7 @@ export async function POST(request: Request) {
   }
 
   for (const [category_id, ids] of updatesByCategory.entries()) {
-    const { error } = await supabaseAdmin
+    const { error } = await admin
       .from("menu_images")
       .update({ category_id })
       .in("id", ids);
@@ -155,4 +156,3 @@ export async function POST(request: Request) {
 
   return NextResponse.json({ ok: true, ...results });
 }
-
