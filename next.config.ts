@@ -33,6 +33,14 @@ const nextConfig: NextConfig = {
         : []),
     ],
   },
+  experimental: {
+    // Prevent serverless tracing from bundling large local assets
+    outputFileTracingExcludes: {
+      '*': [
+        'public/menu/**',
+      ],
+    },
+  },
 };
 const withNextIntl = createNextIntlPlugin();
 
