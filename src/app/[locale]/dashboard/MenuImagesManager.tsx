@@ -66,6 +66,9 @@ export default function MenuImagesManager({
 }) {
   const t = useTranslations("Dashboard");
   const [images, setImages] = useState(initialMenuImages ?? []);
+  useEffect(() => {
+    setImages(initialMenuImages ?? []);
+  }, [initialMenuImages]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   // Strictly show categories that belong to the selected menu
   const filteredCategories = (categories || []).filter((c) => c.menu === selectedMenu);
@@ -82,30 +85,100 @@ export default function MenuImagesManager({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedMenu, categories]);
   const [uploading, setUploading] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [moveToCat, setMoveToCat] = useState<string>("");
+  const [syncing, setSyncing] = useState(false);
   const router = useRouter();
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !selectedCategory) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0 || !selectedCategory) return;
     setUploading(true);
     try {
-      let item: MenuImage;
-      try {
-        item = await uploadViaApi(file, selectedCategory, file.name);
-      } catch (err: any) {
-        if (err?.status === 413) {
-          item = await uploadWithSignedUrl(file, selectedCategory, file.name);
-        } else {
-          throw err;
+      const uploaded: MenuImage[] = [];
+      for (const file of files) {
+        try {
+          let item: MenuImage;
+          try {
+            item = await uploadViaApi(file, selectedCategory, file.name);
+          } catch (err: any) {
+            if (err?.status === 413) {
+              item = await uploadWithSignedUrl(file, selectedCategory, file.name);
+            } else {
+              throw err;
+            }
+          }
+          uploaded.push(item);
+        } catch (err: any) {
+          console.error("Upload error (menu)", err);
         }
       }
-      setImages([item, ...images]);
-      router.refresh();
+      if (uploaded.length > 0) {
+        setImages([...uploaded, ...images]);
+        router.refresh();
+      }
     } catch (error: any) {
-      console.error("Upload error (menu)", error);
+      console.error("Upload batch error (menu)", error);
       alert(`${t("images.status.uploading")}: ${error?.message || error}.`);
     } finally {
       setUploading(false);
+      e.currentTarget.value = ""; // reset input for re-upload
+    }
+  };
+
+  const toggleSelect = (id: number) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const clearSelection = () => setSelectedIds(new Set());
+
+  const moveSelected = async () => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    const target = moveToCat || selectedCategory;
+    if (!target) return;
+    const res = await fetch("/api/admin/menu-images", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ids, category_id: Number(target) }),
+    });
+    if (!res.ok) {
+      const j = await res.json().catch(() => ({}));
+      alert(j?.message || "Failed to move images");
+      return;
+    }
+    const j = await res.json();
+    const updated: MenuImage[] = j.items || [];
+    const updatedMap = new Map(updated.map((u) => [u.id, u] as const));
+    setImages((prev) => prev.map((img) => updatedMap.get(img.id) || img));
+    clearSelection();
+    router.refresh();
+  };
+
+  const syncFromFolders = async () => {
+    if (!selectedMenu) return;
+    setSyncing(true);
+    try {
+      const res = await fetch("/api/admin/menu-images/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ menu: selectedMenu }),
+      });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        alert(j?.message || "Sync failed");
+        return;
+      }
+      router.refresh();
+    } catch (e: any) {
+      alert(e?.message || String(e));
+    } finally {
+      setSyncing(false);
     }
   };
 
@@ -128,6 +201,27 @@ export default function MenuImagesManager({
   const imagesForSelectedCategory = images.filter(
     (img) => img.category_id.toString() === selectedCategory
   );
+  const getName = (img: MenuImage) => {
+    const pick = (img.alt_text || img.image_url || "") as string;
+    return (pick.split("/").pop() || pick) as string;
+  };
+  const getNum = (name: string) => {
+    const m = name.match(/(\d+)/);
+    return m ? parseInt(m[1], 10) : null;
+  };
+  const compareItems = (a: MenuImage, b: MenuImage) => {
+    const an = getName(a);
+    const bn = getName(b);
+    const ai = getNum(an);
+    const bi = getNum(bn);
+    if (ai !== null && bi !== null) return ai - bi;
+    if (ai !== null) return -1;
+    if (bi !== null) return 1;
+    const cmp = an.localeCompare(bn, undefined, { numeric: true, sensitivity: "base" });
+    if (cmp !== 0) return cmp;
+    return a.id - b.id;
+  };
+  const imagesSorted = imagesForSelectedCategory.slice().sort(compareItems);
 
   return (
     <section className="bg-white/70 backdrop-blur rounded-xl shadow-sm ring-1 ring-black/5 p-4 sm:p-6">
@@ -152,22 +246,69 @@ export default function MenuImagesManager({
           <label className="block text-sm font-medium text-gray-700">{t("images.labels.upload")}</label>
           <input
             type="file"
+            multiple
             onChange={handleUpload}
             disabled={uploading || !selectedCategory}
             className="mt-1 block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-indigo-50 file:py-2 file:px-3 file:text-indigo-700 hover:file:bg-indigo-100"
           />
           {uploading && <p className="text-sm text-gray-600 mt-1">{t("images.status.uploading")}</p>}
         </div>
-        <div className="col-span-1 flex items-end">
-          <p className="text-xs text-gray-500">{t("images.hints.selectCategory")}</p>
+        <div className="col-span-1 flex items-end gap-2">
+          <p className="text-xs text-gray-500 mr-auto">{t("images.hints.selectCategory")}</p>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={syncFromFolders}
+              disabled={syncing}
+              className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow disabled:opacity-50"
+              title="Sync from storage folders for this menu"
+            >
+              {syncing ? "Syncing…" : "Sync from folders"}
+            </button>
+            <select
+              value={moveToCat || selectedCategory}
+              onChange={(e) => setMoveToCat(e.target.value)}
+              className="rounded-md border-gray-300 bg-white py-2 px-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+            >
+              {filteredCategories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {(cat as any).name_ro || cat.name}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={moveSelected}
+              disabled={selectedIds.size === 0}
+              className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow disabled:opacity-50"
+              title="Move selected to category"
+            >
+              Move selected
+            </button>
+            {selectedIds.size > 0 && (
+              <button
+                onClick={clearSelection}
+                className="rounded-md bg-gray-100 px-3 py-2 text-sm font-semibold text-gray-700 shadow"
+                title="Clear selection"
+              >
+                Clear
+              </button>
+            )}
+          </div>
         </div>
       </div>
       {filteredCategories.length === 0 ? (
         <p className="text-sm text-gray-600">{t("images.empty.noCategories")}</p>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {imagesForSelectedCategory.map((img) => (
+        {imagesSorted.map((img) => (
           <div key={img.id} className="relative group rounded-md overflow-hidden border border-gray-200 bg-white">
+            <label className="absolute top-1 left-1 z-10 bg-white/90 rounded-md px-1.5 py-1 shadow text-xs text-gray-700 flex items-center gap-1 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={selectedIds.has(img.id)}
+                onChange={() => toggleSelect(img.id)}
+              />
+              {img.id}
+            </label>
             <img
               src={img.image_url}
               alt={img.alt_text ?? ""}
