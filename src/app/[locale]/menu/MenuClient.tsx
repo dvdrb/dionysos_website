@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Script from "next/script";
+import Head from "next/head";
 import { useLocale } from "next-intl";
 import Image from "next/image";
 
@@ -100,6 +101,8 @@ const MenuSection = ({ id, items, sectionIndex }: MenuSectionProps) => {
                 src={src}
                 alt={item.alt_text ?? ""}
                 loading={isPriority ? "eager" : "lazy"}
+                fetchPriority={isPriority ? "high" as any : undefined}
+                sizes="(max-width: 1024px) 100vw, 900px"
                 className="block w-full max-w-3xl select-none"
               />
             );
@@ -121,6 +124,24 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
     navCategories[0]?.id ?? ""
   );
   const [headerOffset, setHeaderOffset] = useState<number>(0);
+  const [deferRest, setDeferRest] = useState(false);
+
+  // Defer rendering of below-the-fold sections to after idle to improve LCP
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const ric = (window as any).requestIdleCallback as
+      | ((cb: () => void, opts?: { timeout?: number }) => number)
+      | undefined;
+    let t: any;
+    if (ric) {
+      t = ric(() => setDeferRest(true), { timeout: 1500 });
+    } else {
+      t = setTimeout(() => setDeferRest(true), 200);
+    }
+    return () => {
+      if (t) clearTimeout(t);
+    };
+  }, []);
 
   // Compute header height to stick nav right under it
   useEffect(() => {
@@ -222,6 +243,11 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
 
   return (
     <div className="bg-[#1a1a1a] min-h-screen font-sans">
+      <Head>
+        {sections?.[0]?.items?.[0]?.image_url && (
+          <link rel="preload" as="image" href={optimizeUrl(sections[0].items[0].image_url)} />
+        )}
+      </Head>
       {/* JSON-LD: Breadcrumbs + Menu schema */}
       <Script id="ld-menu" type="application/ld+json">
         {ld}
@@ -234,7 +260,7 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
       />
 
       <main>
-        {sections.map((section, index) => (
+        {(deferRest ? sections : sections.slice(0, 1)).map((section, index) => (
           <React.Fragment key={section.id}>
             <MenuSection
               id={section.id}
@@ -243,6 +269,9 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
             />
           </React.Fragment>
         ))}
+        {!deferRest && sections.length > 1 && (
+          <div aria-hidden className="h-24" />
+        )}
       </main>
     </div>
   );

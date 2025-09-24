@@ -44,7 +44,7 @@ async function listLocalCategory(menu: string, slug: string, fallbackSlug?: stri
       .filter((e) => e.isFile() && IMG_EXT.has(path.extname(e.name).toLowerCase()))
       .map((e) => ({
         file: e.name,
-        url: `/images/menu/${menu}/${slug}/${e.name}`,
+        url: `/menu/${menu}/${slug}/${e.name}`,
       }));
   } catch {
     if (fallbackSlug && fallbackSlug !== slug) {
