@@ -23,8 +23,9 @@ export async function GET(
 
   try {
     await stat(localPath);
-    const data = await readFile(localPath);
-    return new NextResponse(data, {
+    const data = await readFile(localPath); // Buffer
+    const ab = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength); // ArrayBuffer
+    return new NextResponse(ab, {
       status: 200,
       headers: {
         "Content-Type": contentType(localPath),
