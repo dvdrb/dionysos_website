@@ -22,14 +22,20 @@ type MobileSidePanelProps = {
   onClose: () => void;
   locale: string;
   items: SideMenuItem[];
-  menuTypes: SideMenuItem[];
+  sushiTitle: string;
+  sushiMenuTypes: SideMenuItem[];
+  tavernaTitle: string;
+  tavernaMenuTypes: SideMenuItem[];
 };
 const MobileSidePanel = ({
   isOpen,
   onClose,
   locale,
   items,
-  menuTypes,
+  sushiTitle,
+  sushiMenuTypes,
+  tavernaTitle,
+  tavernaMenuTypes,
 }: MobileSidePanelProps) => {
   return (
     <>
@@ -60,33 +66,62 @@ const MobileSidePanel = ({
 
         {/* Side Panel Content */}
         <div className="overflow-y-auto items-center flex flex-col h-full pb-20">
-          {/* Menu Types only */}
-          <nav className="py-2 w-full">
-            {menuTypes.map((item, index) => (
-              <div key={`menu-${index}`}>
-                <Link
-                  href={item.href}
-                  className="flex items-center gap-4 px-6 py-3 text-gray-800 hover:bg-gray-200 transition-colors"
-                  onClick={onClose}
-                >
-                  {item.imgSrc ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={item.imgSrc}
-                      alt={item.name}
-                      className="w-6 h-6"
-                    />
-                  ) : item.Icon ? (
-                    <item.Icon className="w-6 h-6 text-gray-600" />
-                  ) : null}
-                  <span className="text-lg font-medium">{item.name}</span>
-                </Link>
-                {index < menuTypes.length - 1 && (
-                  <div className="mx-6 border-b border-gray-200" />
-                )}
-              </div>
-            ))}
-          </nav>
+          {/* Sushi Group */}
+          <div className="w-full">
+            <div className="px-6 pt-2 pb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+              {sushiTitle}
+            </div>
+            <nav className="pb-2">
+              {sushiMenuTypes.map((item, index) => (
+                <div key={`sushi-menu-${index}`}>
+                  <Link
+                    href={item.href}
+                    className="flex items-center gap-4 px-6 py-3 text-gray-800 hover:bg-gray-200 transition-colors"
+                    onClick={onClose}
+                  >
+                    {item.imgSrc ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={item.imgSrc} alt={item.name} className="w-6 h-6" />
+                    ) : item.Icon ? (
+                      <item.Icon className="w-6 h-6 text-gray-600" />
+                    ) : null}
+                    <span className="text-lg font-medium">{item.name}</span>
+                  </Link>
+                  {index < sushiMenuTypes.length - 1 && (
+                    <div className="mx-6 border-b border-gray-200" />
+                  )}
+                </div>
+              ))}
+            </nav>
+          </div>
+          {/* Taverna Group */}
+          <div className="w-full">
+            <div className="px-6 pt-4 pb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+              {tavernaTitle}
+            </div>
+            <nav className="pb-2">
+              {tavernaMenuTypes.map((item, index) => (
+                <div key={`taverna-menu-${index}`}>
+                  <Link
+                    href={item.href}
+                    className="flex items-center gap-4 px-6 py-3 text-gray-800 hover:bg-gray-200 transition-colors"
+                    onClick={onClose}
+                  >
+                    {item.imgSrc ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={item.imgSrc} alt={item.name} className="w-6 h-6" />
+                    ) : item.Icon ? (
+                      <item.Icon className="w-6 h-6 text-gray-600" />
+                    ) : null}
+                    <span className="text-lg font-medium">{item.name}</span>
+                  </Link>
+                  {index < tavernaMenuTypes.length - 1 && (
+                    <div className="mx-6 border-b border-gray-200" />
+                  )}
+                </div>
+              ))}
+            </nav>
+          </div>
         </div>
       </div>
     </>
@@ -128,7 +163,7 @@ const Header = () => {
 
   const isSushiPage = useMemo(() => {
     const p = pathname || "";
-    return /^\/(ro|ru|en)\/menu\/sushi(\/|$)/.test(p);
+    return /^(?:\/(ro|ru|en))\/menu\/(sushi|sushi-restaurant|sushi-restaurant-sushi)(?:\/|$)/.test(p);
   }, [pathname]);
 
   // Close language dropdown on outside click or Escape
@@ -199,7 +234,22 @@ const Header = () => {
     }));
   }, [cats, loadingCats, catsError, locale]);
 
-  const menuTypes: SideMenuItem[] = useMemo(() => {
+  const sushiMenuTypes: SideMenuItem[] = useMemo(() => {
+    return [
+      {
+        name: t("modal.sushi"),
+        href: `/${locale}/menu/sushi-restaurant-sushi`,
+        imgSrc: "/icon_sushi.svg",
+      },
+      {
+        name: t("modal.sushi_restaurant"),
+        href: `/${locale}/menu/sushi-restaurant`,
+        imgSrc: "/icon_taverna.svg",
+      },
+    ];
+  }, [locale, t]);
+
+  const tavernaMenuTypes: SideMenuItem[] = useMemo(() => {
     return [
       {
         name: t("modal.taverna"),
@@ -312,7 +362,10 @@ const Header = () => {
         onClose={() => setIsSidePanelOpen(false)}
         locale={locale}
         items={sideMenuItems}
-        menuTypes={menuTypes}
+        sushiTitle={t("sidebar.groups.sushi")}
+        sushiMenuTypes={sushiMenuTypes}
+        tavernaTitle={t("sidebar.groups.taverna")}
+        tavernaMenuTypes={tavernaMenuTypes}
       />
     </>
   );

@@ -26,7 +26,13 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   if (!body) return NextResponse.json({ message: "Invalid body" }, { status: 400 });
   const { name_ro, name_ru, name_en, icon, menu } = body;
-  const ALLOWED_MENUS = new Set(["taverna", "bar", "sushi"]);
+  const ALLOWED_MENUS = new Set([
+    "taverna",
+    "bar",
+    "sushi",
+    "sushi-restaurant",
+    "sushi-restaurant-sushi",
+  ]);
 
   // Prefer ro as base name if available
   const baseName = name_ro || body.name || "";
@@ -39,7 +45,7 @@ export async function POST(request: Request) {
 
   if (menu && !ALLOWED_MENUS.has(menu)) {
     return NextResponse.json(
-      { message: "Invalid menu. Allowed: taverna, bar, sushi" },
+      { message: "Invalid menu. Allowed: taverna, bar, sushi, sushi-restaurant, sushi-restaurant-sushi" },
       { status: 400 }
     );
   }
@@ -59,10 +65,12 @@ export async function POST(request: Request) {
     .single());
 
   if (error) {
-    // Retry without multilingual fields in case columns don't exist
+    // Retry without multilingual fields (name_ro/name_ru/name_en), but keep menu if provided
+    const fallbackInsert: any = { name: baseName, icon: icon ?? null };
+    if (menu) fallbackInsert.menu = menu;
     ({ data, error } = await supabaseAdmin
       .from("categories")
-      .insert({ name: baseName, icon: icon ?? null })
+      .insert(fallbackInsert)
       .select("*")
       .single());
   }

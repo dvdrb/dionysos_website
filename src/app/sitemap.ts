@@ -1,7 +1,13 @@
 import type { MetadataRoute } from "next";
 
 const locales = ["ro", "ru", "en"] as const;
-const menus = ["taverna", "bar", "sushi"] as const;
+const menus = [
+  "taverna",
+  "bar",
+  "sushi",
+  "sushi-restaurant",
+  "sushi-restaurant-sushi",
+] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const site = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";

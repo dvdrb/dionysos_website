@@ -83,6 +83,8 @@ export default function DashboardClient({
     { id: "taverna", label: t("menus.taverna") },
     { id: "bar", label: t("menus.bar") },
     { id: "sushi", label: t("menus.sushi") },
+    { id: "sushi-restaurant", label: t("menus.sushi_restaurant") },
+    { id: "sushi-restaurant-sushi", label: t("menus.sushi_restaurant_sushi") },
   ] as const;
   const [selectedMenu, setSelectedMenu] = useState<(typeof MENUS)[number]["id"]>(
     "taverna"

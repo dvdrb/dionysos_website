@@ -22,7 +22,18 @@
     "modal": {
       "bar": "Бар",
       "taverna": "Меню таверны",
-      "sushi": "Суши меню"
+      "sushi": "Суши меню",
+      "sushi_restaurant": "Меню ресторана"
+    },
+    "brand": {
+      "taverna": "Dionysos Taverna",
+      "sushi": "Dionysos Sushi"
+    },
+    "sidebar": {
+      "groups": {
+        "sushi": "Ресторан Dionysos",
+        "taverna": "Таверна Dionysos"
+      }
     }
   },
   "Footer": {
@@ -53,7 +64,13 @@
       "promo_items": "Промо",
       "gallery": "Галерея"
     },
-    "menus": {"taverna": "Таверна", "bar": "Бар", "sushi": "Суши"},
+    "menus": {
+      "taverna": "Таверна (Dionysos Taverna)",
+      "bar": "Бар (Dionysos Taverna)",
+      "sushi": "Суши (Dionysos Taverna)",
+      "sushi_restaurant": "Меню ресторана (Dionysos Sushi)",
+      "sushi_restaurant_sushi": "Суши (Dionysos Sushi)"
+    },
     "categories": {
       "heading": "Управление категориями",
       "labels": {

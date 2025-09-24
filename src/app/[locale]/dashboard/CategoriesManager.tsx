@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { Category } from "./DashboardClient"; // Importăm tipul corect
@@ -28,11 +28,18 @@ export default function CategoriesManager({
   const [iconQuery, setIconQuery] = useState("");
   const router = useRouter();
   const MENUS = [
-    { id: "taverna", label: "Taverna" },
-    { id: "bar", label: "Bar" },
-    { id: "sushi", label: "Sushi" },
+    { id: "taverna", label: t("menus.taverna") },
+    { id: "bar", label: t("menus.bar") },
+    { id: "sushi", label: t("menus.sushi") },
+    { id: "sushi-restaurant", label: t("menus.sushi_restaurant") },
+    { id: "sushi-restaurant-sushi", label: t("menus.sushi_restaurant_sushi") },
   ] as const;
   const [menu, setMenu] = useState<string>(selectedMenu);
+  // Keep the form's menu in sync with the dashboard selector
+  // so newly created categories default to the currently selected menu.
+  useEffect(() => {
+    setMenu(selectedMenu);
+  }, [selectedMenu]);
 
   const iconNames = useMemo(() => {
     return Object.keys(Icons)

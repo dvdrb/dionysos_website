@@ -2,7 +2,13 @@ import { supabase } from "@/lib/supabaseClient";
 import MenuClient, { SectionType } from "../MenuClient";
 import type { Metadata } from "next";
 
-const MENUS = ["taverna", "bar", "sushi"] as const;
+const MENUS = [
+  "taverna",
+  "bar",
+  "sushi",
+  "sushi-restaurant",
+  "sushi-restaurant-sushi",
+] as const;
 type MenuSlug = (typeof MENUS)[number];
 
 async function getMenuData(locale: string, menu: string) {
@@ -90,6 +96,16 @@ export async function generateMetadata({
     taverna: { ro: "Meniu Taverna", ru: "Меню таверны", en: "Taverna Menu" },
     bar: { ro: "Bar", ru: "Бар", en: "Bar" },
     sushi: { ro: "Meniu Sushi", ru: "Суши меню", en: "Sushi Menu" },
+    "sushi-restaurant": {
+      ro: "Meniu Restaurant Sushi",
+      ru: "Меню ресторана (Суши)",
+      en: "Sushi Restaurant Menu",
+    },
+    "sushi-restaurant-sushi": {
+      ro: "Meniu Sushi (Restaurant)",
+      ru: "Суши меню (Ресторан)",
+      en: "Sushi Menu (Restaurant)",
+    },
   };
   const title = menuNames[menu]?.[locale as "ro" | "ru" | "en"] || menu;
   const description =

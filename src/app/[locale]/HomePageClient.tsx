@@ -46,7 +46,8 @@ export default function HomePageClient({
   promoItems,
 }: HomePageClientProps) {
   // State pentru modal
-  const [showModal, setShowModal] = useState(false);
+  // Which location's menu modal is open: 'sushi' (Dionysos Restaurant) or 'taverna' (Dionysos Taverna)
+  const [activeMenuModal, setActiveMenuModal] = useState<null | "sushi" | "taverna">(null);
 
   // Referințe pentru Swiper-e
   const galleryPrevRef = useRef<HTMLButtonElement | null>(null);
@@ -85,13 +86,13 @@ export default function HomePageClient({
   }, []);
 
   // Funcție pentru deschiderea modalului
-  const openModal = () => {
-    setShowModal(true);
+  const openModal = (which: "sushi" | "taverna") => {
+    setActiveMenuModal(which);
   };
 
   // Funcție pentru închiderea modalului
   const closeModal = () => {
-    setShowModal(false);
+    setActiveMenuModal(null);
   };
 
   // Închide modalul când se apasă ESC
@@ -107,19 +108,18 @@ export default function HomePageClient({
 
   // Prefetch target menu pages when modal opens to reduce latency
   useEffect(() => {
-    if (!showModal) return;
-    const targets = [
-      `/${locale}/menu/bar`,
-      `/${locale}/menu/taverna`,
-      `/${locale}/menu/sushi`,
-    ];
+    if (!activeMenuModal) return;
+    const targets =
+      activeMenuModal === "sushi"
+        ? [`/${locale}/menu/sushi-restaurant-sushi`, `/${locale}/menu/sushi-restaurant`]
+        : [`/${locale}/menu/taverna`, `/${locale}/menu/bar`, `/${locale}/menu/sushi`];
     for (const href of targets) {
       try {
         // @ts-ignore: prefetch exists in app router
         router.prefetch?.(href);
       } catch {}
     }
-  }, [showModal, locale]);
+  }, [activeMenuModal, locale]);
 
   return (
     <div className="bg-black text-white pt-13">
@@ -159,48 +159,78 @@ export default function HomePageClient({
             height={50}
             className="object-cover"
           />
-          {showModal && (
+          {activeMenuModal && (
             <div>
               {/* Backdrop */}
-              <div onClick={closeModal} />
+              <div
+                className="fixed inset-0 z-40 bg-black/50"
+                onClick={closeModal}
+                aria-hidden
+              />
 
               {/* Modal Content */}
-              <div className="relative z-10 w-full max-w-md mt-7">
-                {/* Menu Categories */}
-                <div className="space-y-4">
-                  <MenuCategoryButton
-                    icon={barIcon}
-                    label={t("modal.bar")}
-                    href={`/${locale}/menu/bar`}
-                  />
-
-                  <MenuCategoryButton
-                    icon={tavernaIcon}
-                    label={t("modal.taverna")}
-                    href={`/${locale}/menu/taverna`}
-                  />
-
-                  <MenuCategoryButton
-                    icon={sushiIcon}
-                    label={t("modal.sushi")}
-                    href={`/${locale}/menu/sushi`}
-                  />
+              <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+                <div className="relative w-full max-w-md rounded-2xl bg-white p-5 shadow-xl">
+                  <div className="flex items-center justify-end">
+                    <button
+                      onClick={closeModal}
+                      aria-label="Close"
+                      className="inline-flex items-center justify-center rounded-full p-2 text-gray-600 hover:bg-gray-100"
+                    >
+                      <CloseIcon />
+                    </button>
+                  </div>
+                  {/* Menu Categories */}
+                  <div className="mt-3 space-y-4">
+                  {activeMenuModal === "taverna" ? (
+                    <>
+                      <MenuCategoryButton
+                        icon={barIcon}
+                        label={t("modal.bar")}
+                        href={`/${locale}/menu/bar`}
+                      />
+                      <MenuCategoryButton
+                        icon={tavernaIcon}
+                        label={t("modal.taverna")}
+                        href={`/${locale}/menu/taverna`}
+                      />
+                      <MenuCategoryButton
+                        icon={sushiIcon}
+                        label={t("modal.sushi")}
+                        href={`/${locale}/menu/sushi`}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <MenuCategoryButton
+                        icon={sushiIcon}
+                        label={t("modal.sushi")}
+                        href={`/${locale}/menu/sushi-restaurant-sushi`}
+                      />
+                      <MenuCategoryButton
+                        icon={tavernaIcon}
+                        label={t("modal.sushi_restaurant")}
+                        href={`/${locale}/menu/sushi-restaurant`}
+                      />
+                    </>
+                  )}
+                  </div>
                 </div>
               </div>
             </div>
           )}
-          {!showModal && (
+          {!activeMenuModal && (
             <div className="relative mt-20 grid w-full items-center max-w-3xl h-full grid-cols-2 gap-6">
               <LocationCard
                 label={t("location.varzaresti")}
                 phone="069993755"
-                onMenuClick={openModal}
+                onMenuClick={() => openModal("sushi")}
               />
               <div className="pointer-events-none absolute left-1/2 top-1/2 h-full -translate-x-1/2 -translate-y-1/2 border-l border-white/50" />
               <LocationCard
                 label={t("location.nisporeni")}
                 phone="068118111"
-                onMenuClick={openModal}
+                onMenuClick={() => openModal("taverna")}
               />
             </div>
           )}
@@ -365,7 +395,7 @@ function MenuCategoryButton({
     <Link
       prefetch
       href={href}
-      className="w-full flex items-center gap-4 bg-white/90 hover:bg-white text-gray-900 rounded-xl px-6 py-4 transition-all duration-200 hover:scale-[1.02]"
+      className="w-full flex items-center gap-4 bg-white/90 hover:bg-white text-gray-900 rounded-xl px-6 py-4 transition-all duration-200 hover:scale-[1.02] ring-1 ring-gray-300 hover:ring-gray-400 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
     >
       <div className="flex-shrink-0">
         {typeof icon === "string" ? (

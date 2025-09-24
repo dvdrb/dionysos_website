@@ -22,7 +22,18 @@
     "modal": {
       "bar": "Bar",
       "taverna": "Meniu Taverna",
-      "sushi": "Meniu Sushi"
+      "sushi": "Meniu Sushi",
+      "sushi_restaurant": "Meniu Restaurant"
+    },
+    "brand": {
+      "taverna": "Dionysos Taverna",
+      "sushi": "Dionysos Sushi"
+    },
+    "sidebar": {
+      "groups": {
+        "sushi": "Restaurant Dionysos",
+        "taverna": "Taverna Dionysos"
+      }
     }
   },
   "Footer": {
@@ -53,7 +64,13 @@
       "promo_items": "Promo",
       "gallery": "Galerie"
     },
-    "menus": {"taverna": "Taverna", "bar": "Bar", "sushi": "Sushi"},
+    "menus": {
+      "taverna": "Taverna (Dionysos Taverna)",
+      "bar": "Bar (Dionysos Taverna)",
+      "sushi": "Sushi (Dionysos Taverna)",
+      "sushi_restaurant": "Meniu Restaurant (Dionysos Sushi)",
+      "sushi_restaurant_sushi": "Sushi (Dionysos Sushi)"
+    },
     "categories": {
       "heading": "Gestionează Categoriile",
       "labels": {
