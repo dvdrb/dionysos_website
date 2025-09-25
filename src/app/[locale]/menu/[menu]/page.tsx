@@ -16,7 +16,8 @@ const MENUS = [
 type MenuSlug = (typeof MENUS)[number];
 
 const IMG_EXT = new Set([".webp", ".jpg", ".jpeg", ".png", ".gif"]);
-const USE_LOCAL_MENU = process.env.NEXT_PUBLIC_LOCAL_MENU === "1" || process.env.LOCAL_MENU === "1";
+// Force local assets for all menus (requested: always use local images)
+const USE_LOCAL_MENU = true;
 
 function slugify(input: string) {
   const s = String(input)
@@ -83,7 +84,18 @@ function compareItems(a: any, b: any): number {
   return aid - bid;
 }
 
-function compareSlugs(a: string, b: string): number {
+function leadingNumber(input: string): number | null {
+  const m = input.match(/^(\d+)/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+function compareCategoryFolders(a: string, b: string): number {
+  // Prefer numeric prefix ordering like 01-..., 02-..., fallback to natural compare
+  const an = leadingNumber(a);
+  const bn = leadingNumber(b);
+  if (an !== null && bn !== null) return an - bn;
+  if (an !== null) return -1;
+  if (bn !== null) return 1;
   return a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" });
 }
 
@@ -101,7 +113,7 @@ async function getMenuData(locale: string, menu: string) {
         if (files.length > 0) localCats.push(dir.name);
       }
       if (localCats.length > 0) {
-        for (const folderSlug of localCats.sort(compareSlugs)) {
+        for (const folderSlug of localCats.sort(compareCategoryFolders)) {
           const localFiles = await listLocalCategory(menu, folderSlug);
           const items = localFiles
             .map((f, idx) => ({ id: -300000 - idx, image_url: f.url, alt_text: f.file }))
@@ -117,6 +129,8 @@ async function getMenuData(locale: string, menu: string) {
         return localOnlySections;
       }
     } catch {}
+    // Strict local-only: do not fall back to DB when enforced
+    return [] as SectionType[];
   }
 
   // 2) Otherwise, fall back to DB categories (local-first per category) and include local-only leftover folders
@@ -199,7 +213,10 @@ async function getMenuData(locale: string, menu: string) {
     const menuBase2 = path.join(process.cwd(), "public", "menu", menu);
     try {
       const entries = await fs.readdir(menuBase2, { withFileTypes: true });
-      const folderSlugs = entries.filter((e) => e.isDirectory()).map((e) => e.name).sort(compareSlugs);
+      const folderSlugs = entries
+        .filter((e) => e.isDirectory())
+        .map((e) => e.name)
+        .sort(compareCategoryFolders);
       for (const folderSlug of folderSlugs) {
         if (presentSlugs.has(folderSlug)) continue; // already included via DB category
         const localFiles = await listLocalCategory(menu, folderSlug);
