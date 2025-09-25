@@ -241,15 +241,15 @@ export default function HomePageClient({
           {!activeMenuModal && (
             <div className="relative mt-20 grid w-full items-center max-w-3xl h-full grid-cols-2 gap-6">
               <LocationCard
-                label={t("location.varzaresti")}
-                phone="069993755"
-                onMenuClick={() => openModal("sushi")}
-              />
-              <div className="pointer-events-none absolute left-1/2 top-1/2 h-full -translate-x-1/2 -translate-y-1/2 border-l border-white/50" />
-              <LocationCard
                 label={t("location.nisporeni")}
                 phone="068118111"
                 onMenuClick={() => openModal("taverna")}
+              />
+              <div className="pointer-events-none absolute left-1/2 top-1/2 h-full -translate-x-1/2 -translate-y-1/2 border-l border-white/50" />
+              <LocationCard
+                label={t("location.varzaresti")}
+                phone="069993755"
+                onMenuClick={() => openModal("sushi")}
               />
             </div>
           )}

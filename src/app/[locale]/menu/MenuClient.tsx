@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Script from "next/script";
 import Head from "next/head";
 import { useLocale, useTranslations } from "next-intl";
@@ -49,16 +49,19 @@ type CategoryNavProps = {
   activeCategory: string;
   onCategoryClick: (categoryId: string) => void;
   headerOffset: number;
+  navRef?: React.RefObject<HTMLDivElement>;
 };
 const CategoryNav = ({
   categories,
   activeCategory,
   onCategoryClick,
   headerOffset,
+  navRef,
 }: CategoryNavProps) => (
   <div
     className="bg-black/80 backdrop-blur-sm sticky z-30 py-3"
     style={{ top: headerOffset }}
+    ref={navRef}
   >
     <div className="container mx-auto px-4">
       <nav className="flex items-center gap-4 overflow-x-auto pb-2">
@@ -86,13 +89,17 @@ type MenuSectionProps = {
   id: string;
   items: MenuImageType[];
   sectionIndex: number;
+  scrollMarginTop: number;
 };
-const MenuSection = ({ id, items, sectionIndex }: MenuSectionProps) => {
+const MenuSection = ({ id, items, sectionIndex, scrollMarginTop }: MenuSectionProps) => {
   return (
     <section
       id={id}
-      className="scroll-mt-20"
-      style={{ contentVisibility: "auto", containIntrinsicSize: "1200px" }}
+      style={{
+        contentVisibility: "auto",
+        containIntrinsicSize: "1200px",
+        scrollMarginTop,
+      }}
     >
       <div className="container mx-auto px-2 sm:px-4">
         <div className="flex flex-col items-center gap-0">
@@ -138,7 +145,10 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
     navCategories[0]?.id ?? ""
   );
   const [headerOffset, setHeaderOffset] = useState<number>(0);
+  const [navHeight, setNavHeight] = useState<number>(0);
   const [deferRest, setDeferRest] = useState(false);
+  const navRef = useRef<HTMLDivElement | null>(null);
+  const [lastTargetId, setLastTargetId] = useState<string | null>(null);
 
   // Defer rendering of below-the-fold sections to after idle to improve LCP
   useEffect(() => {
@@ -179,6 +189,24 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
     };
   }, []);
 
+  // Compute category nav height for accurate scroll offset
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const el = navRef.current;
+    const update = () => setNavHeight(el instanceof HTMLElement ? el.offsetHeight : 0);
+    update();
+    let ro: ResizeObserver | null = null;
+    if (el instanceof HTMLElement && "ResizeObserver" in window) {
+      ro = new ResizeObserver(update);
+      ro.observe(el);
+    }
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("resize", update);
+      if (ro && el instanceof HTMLElement) ro.disconnect();
+    };
+  }, [navRef]);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -207,12 +235,107 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
     };
   }, [navCategories]);
 
-  const handleCategoryClick = (categoryId: string) => {
-    const element = document.getElementById(categoryId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+  const scrollToCategoryId = (id: string, behavior: ScrollBehavior = "smooth") => {
+    const el = document.getElementById(id);
+    if (!el) return false;
+    // Use scrollIntoView with CSS scroll-margin-top; avoids sticky nav mid-scroll shifts
+    el.scrollIntoView({ behavior, block: "start" });
+    return true;
   };
+
+  const handleCategoryClick = (categoryId: string) => {
+    setDeferRest(true); // ensure all sections rendered
+    setLastTargetId(categoryId);
+
+    // Try immediate smooth scroll; if element not yet present, retry a few frames
+    let attempts = 0;
+    const attempt = () => {
+      const ok = scrollToCategoryId(categoryId, "smooth");
+      if (!ok && attempts < 12) {
+        attempts += 1;
+        requestAnimationFrame(attempt);
+      } else if (ok) {
+        // Correct once after layout settles
+        requestAnimationFrame(() => scrollToCategoryId(categoryId, "auto"));
+        setTimeout(() => scrollToCategoryId(categoryId, "auto"), 200);
+
+        // Watch images in all sections up to the target; correct when they load
+        try {
+          const targetIndex = sections.findIndex((s) => s.id === categoryId);
+          if (targetIndex >= 0) {
+            const idsToWatch = sections.slice(0, targetIndex + 1).map((s) => s.id);
+            const seen = new WeakSet<EventTarget>();
+            idsToWatch.forEach((id) => {
+              const sec = document.getElementById(id);
+              if (!sec) return;
+              sec.querySelectorAll("img").forEach((img) => {
+                const im = img as HTMLImageElement;
+                if (im.complete || seen.has(im)) return;
+                const onLoad = () => {
+                  seen.add(im);
+                  scrollToCategoryId(categoryId, "auto");
+                  im.removeEventListener("load", onLoad);
+                };
+                im.addEventListener("load", onLoad, { once: true });
+              });
+            });
+          }
+        } catch {}
+
+        // Additional timed corrections for late layout shifts
+        setTimeout(() => scrollToCategoryId(categoryId, "auto"), 500);
+        setTimeout(() => scrollToCategoryId(categoryId, "auto"), 900);
+      }
+    };
+    requestAnimationFrame(attempt);
+  };
+
+  // If header/nav heights change after a click, correct position once
+  useEffect(() => {
+    if (!lastTargetId) return;
+    // slight debounce to wait for style update
+    const t = setTimeout(() => scrollToCategoryId(lastTargetId, "auto"), 50);
+    return () => clearTimeout(t);
+  }, [headerOffset, navHeight, lastTargetId]);
+
+  // Support deep links like /menu/taverna#gustari
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const hash = window.location.hash?.slice(1);
+    if (!hash) return;
+    setDeferRest(true);
+    setLastTargetId(hash);
+    // Attempt after paint
+    requestAnimationFrame(() => {
+      scrollToCategoryId(hash, "auto");
+      // correct after images/nav settle
+      setTimeout(() => scrollToCategoryId(hash, "auto"), 250);
+      // Watch images above and inside the target
+      try {
+        const targetIndex = sections.findIndex((s) => s.id === hash);
+        if (targetIndex >= 0) {
+          const idsToWatch = sections.slice(0, targetIndex + 1).map((s) => s.id);
+          const seen = new WeakSet<EventTarget>();
+          idsToWatch.forEach((id) => {
+            const sec = document.getElementById(id);
+            if (!sec) return;
+            sec.querySelectorAll("img").forEach((img) => {
+              const im = img as HTMLImageElement;
+              if (im.complete || seen.has(im)) return;
+              const onLoad = () => {
+                seen.add(im);
+                scrollToCategoryId(hash, "auto");
+                im.removeEventListener("load", onLoad);
+              };
+              im.addEventListener("load", onLoad, { once: true });
+            });
+          });
+        }
+      } catch {}
+      setTimeout(() => scrollToCategoryId(hash, "auto"), 600);
+      setTimeout(() => scrollToCategoryId(hash, "auto"), 1000);
+    });
+  }, []);
 
   if (!sections || sections.length === 0) {
     return (
@@ -271,6 +394,7 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
         activeCategory={activeCategory}
         onCategoryClick={handleCategoryClick}
         headerOffset={headerOffset}
+        navRef={navRef}
       />
 
       <main>
@@ -280,6 +404,7 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
               id={section.id}
               items={section.items.map((it) => ({ ...it, image_url: optimizeUrl(it.image_url) }))}
               sectionIndex={index}
+              scrollMarginTop={headerOffset + navHeight + 8}
             />
           </React.Fragment>
         ))}
