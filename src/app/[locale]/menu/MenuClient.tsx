@@ -89,7 +89,11 @@ type MenuSectionProps = {
 };
 const MenuSection = ({ id, items, sectionIndex }: MenuSectionProps) => {
   return (
-    <section id={id} className="scroll-mt-20">
+    <section
+      id={id}
+      className="scroll-mt-20"
+      style={{ contentVisibility: "auto", containIntrinsicSize: "1200px" }}
+    >
       <div className="container mx-auto px-2 sm:px-4">
         <div className="flex flex-col items-center gap-0">
           {items.map((item, itemIndex) => {
@@ -102,6 +106,7 @@ const MenuSection = ({ id, items, sectionIndex }: MenuSectionProps) => {
                 alt={item.alt_text ?? ""}
                 loading={isPriority ? "eager" : "lazy"}
                 fetchPriority={isPriority ? "high" as any : undefined}
+                decoding="async"
                 sizes="(max-width: 1024px) 100vw, 900px"
                 className="block w-full max-w-3xl select-none"
               />

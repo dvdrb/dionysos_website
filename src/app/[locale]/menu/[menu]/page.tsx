@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
+export const revalidate = 300; // ISR to cache menu data for 5 minutes
+
 const MENUS = [
   "taverna",
   "bar",
