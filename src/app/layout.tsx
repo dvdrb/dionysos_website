@@ -16,8 +16,8 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Dionysos Restaurant",
-    template: "%s | Dionysos Restaurant",
+    default: "Dionysos Taverna & Sushi ",
+    template: "%s | Dionysos Taverna & Sushi ",
   },
   description:
     "Dionysos – restaurant eurpoean, preparate proaspete și atmosferă primitoare. Vezi meniul și galeria noastră.",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   themeColor: "#000000",
   openGraph: {
     type: "website",
-    title: "Dionysos Restaurant",
+    title: "Dionysos Restaurant & Sushi",
     siteName: "Dionysos",
     description:
       "Preparate proaspete, atmosferă primitoare. Descoperă meniul și galeria.",
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dionysos Restaurant",
+    title: "Dionysos Restaurant & Sushi",
     description:
       "Preparate proaspete, atmosferă primitoare. Descoperă meniul și galeria.",
     images: ["/dionysos_logo.png"],
@@ -80,7 +80,11 @@ export default async function RootLayout({
       <head>
         {supabaseHost ? (
           <>
-            <link rel="preconnect" href={`https://${supabaseHost}`} crossOrigin="" />
+            <link
+              rel="preconnect"
+              href={`https://${supabaseHost}`}
+              crossOrigin=""
+            />
             <link rel="dns-prefetch" href={`https://${supabaseHost}`} />
           </>
         ) : null}

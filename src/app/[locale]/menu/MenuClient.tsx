@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Script from "next/script";
 import Head from "next/head";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 
 // Map Supabase public storage URLs to a local-first route (/images/<bucket>/<path>)
@@ -121,9 +121,18 @@ const MenuSection = ({ id, items, sectionIndex }: MenuSectionProps) => {
 // --- COMPONENTA PRINCIPALĂ CLIENT ---
 export default function MenuClient({ sections }: { sections: SectionType[] }) {
   const locale = useLocale();
+  const t = useTranslations();
+  const translateCategory = (id: string, fallback: string) => {
+    try {
+      const v = t(`menu_categories.${id}` as any);
+      return v || fallback;
+    } catch {
+      return fallback;
+    }
+  };
   const navCategories: NavCategory[] = sections.map(({ id, name }) => ({
     id,
-    name,
+    name: translateCategory(id, name),
   }));
   const [activeCategory, setActiveCategory] = useState<string>(
     navCategories[0]?.id ?? ""
@@ -240,7 +249,7 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
       name: "Dionysos Menu",
       hasMenuSection: sections.map((s) => ({
         "@type": "MenuSection",
-        name: s.name,
+        name: translateCategory(s.id, s.name),
         url: `${menuUrl}#${s.id}`,
       })),
     },

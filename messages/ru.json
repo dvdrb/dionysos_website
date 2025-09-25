@@ -110,5 +110,29 @@
       "status": {"uploading": "Загрузка..."},
       "confirm": {"delete": "Вы уверены?"}
     }
+  },
+  "menu_categories": {
+    "boba-tea": "Боба-чай",
+    "bauturi-reci": "Холодные напитки",
+    "cocktails": "Коктейли",
+    "ceai-si-cafea": "Чай и кофе",
+    "alcool": "Алкоголь",
+    "narghilea": "Кальян",
+    "salate": "Салаты",
+    "mic-dejun": "Завтрак",
+    "paste": "Паста",
+    "supe": "Супы",
+    "pelimeni": "Пельмени",
+    "burger": "Бургеры",
+    "kebab": "Кебаб",
+    "pizza": "Пицца",
+    "platouri": "Платы",
+    "feluri-principale": "Основные блюда",
+    "gustari": "Закуски",
+    "deserturi": "Десерты",
+    "combo": "Комбо",
+    "seturi": "Сеты",
+    "rulouri": "Роллы",
+    "cartofi": "Картофель"
   }
 }

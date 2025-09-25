@@ -68,7 +68,7 @@ const MobileSidePanel = ({
         <div className="overflow-y-auto items-center flex flex-col h-full pb-20">
           {/* Sushi Group */}
           <div className="w-full">
-            <div className="px-6 pt-2 pb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+            <div className="px-6 pt-2 pb-1 text-sm font-semibold tracking-wide text-gray-500 ">
               {sushiTitle}
             </div>
             <nav className="pb-2">
@@ -81,7 +81,11 @@ const MobileSidePanel = ({
                   >
                     {item.imgSrc ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={item.imgSrc} alt={item.name} className="w-6 h-6" />
+                      <img
+                        src={item.imgSrc}
+                        alt={item.name}
+                        className="w-6 h-6"
+                      />
                     ) : item.Icon ? (
                       <item.Icon className="w-6 h-6 text-gray-600" />
                     ) : null}
@@ -96,7 +100,7 @@ const MobileSidePanel = ({
           </div>
           {/* Taverna Group */}
           <div className="w-full">
-            <div className="px-6 pt-4 pb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+            <div className="px-6 pt-4 pb-1 text-sm font-semibold tracking-wide text-gray-500 ">
               {tavernaTitle}
             </div>
             <nav className="pb-2">
@@ -109,7 +113,11 @@ const MobileSidePanel = ({
                   >
                     {item.imgSrc ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={item.imgSrc} alt={item.name} className="w-6 h-6" />
+                      <img
+                        src={item.imgSrc}
+                        alt={item.name}
+                        className="w-6 h-6"
+                      />
                     ) : item.Icon ? (
                       <item.Icon className="w-6 h-6 text-gray-600" />
                     ) : null}
@@ -163,7 +171,9 @@ const Header = () => {
 
   const isSushiPage = useMemo(() => {
     const p = pathname || "";
-    return /^(?:\/(ro|ru|en))\/menu\/(sushi|sushi-restaurant|sushi-restaurant-sushi)(?:\/|$)/.test(p);
+    return /^(?:\/(ro|ru|en))\/menu\/(sushi|sushi-restaurant|sushi-restaurant-sushi)(?:\/|$)/.test(
+      p
+    );
   }, [pathname]);
 
   // Close language dropdown on outside click or Escape
@@ -307,7 +317,11 @@ const Header = () => {
             >
               <Image
                 src={isSushiPage ? "/suhsi_logo.png" : "/dionysos_logo.png"}
-                alt={isSushiPage ? "Dionysos Sushi logo" : "Dionysos restaurant logo"}
+                alt={
+                  isSushiPage
+                    ? "Dionysos Sushi logo"
+                    : "Dionysos restaurant logo"
+                }
                 width={130}
                 height={32}
                 priority
@@ -325,9 +339,22 @@ const Header = () => {
               aria-expanded={isLangOpen}
               className="flex items-center gap-1 px-2 py-1 text-gray-200 hover:text-white hover:bg-white/10 rounded"
             >
-              <span className="text-sm md:text-base font-light uppercase">{locale}</span>
-              <svg className={`w-3 h-3 transition-transform ${isLangOpen ? "rotate-180" : "rotate-0"}`} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.25 8.29a.75.75 0 01-.02-1.08z" clipRule="evenodd" />
+              <span className="text-sm md:text-base font-light uppercase">
+                {locale}
+              </span>
+              <svg
+                className={`w-3 h-3 transition-transform ${
+                  isLangOpen ? "rotate-180" : "rotate-0"
+                }`}
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.25 8.29a.75.75 0 01-.02-1.08z"
+                  clipRule="evenodd"
+                />
               </svg>
             </button>
             {isLangOpen && (
@@ -341,7 +368,9 @@ const Header = () => {
                     key={lng.code}
                     href={switchTo(lng.code)}
                     className={`block px-3 py-2 text-sm ${
-                      lng.code === locale ? "bg-gray-100 text-gray-900" : "text-gray-700 hover:bg-gray-50"
+                      lng.code === locale
+                        ? "bg-gray-100 text-gray-900"
+                        : "text-gray-700 hover:bg-gray-50"
                     }`}
                     onClick={() => setIsLangOpen(false)}
                     role="option"

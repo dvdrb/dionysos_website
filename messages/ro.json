@@ -110,5 +110,29 @@
       "status": {"uploading": "Se încarcă..."},
       "confirm": {"delete": "Ești sigur?"}
     }
+  },
+  "menu_categories": {
+    "boba-tea": "Boba tea",
+    "bauturi-reci": "Băuturi reci",
+    "cocktails": "Cocktailuri",
+    "ceai-si-cafea": "Ceai și cafea",
+    "alcool": "Alcool",
+    "narghilea": "Narghilea",
+    "salate": "Salate",
+    "mic-dejun": "Mic dejun",
+    "paste": "Paste",
+    "supe": "Supe",
+    "pelimeni": "Pelmeni",
+    "burger": "Burgeri",
+    "kebab": "Kebab",
+    "pizza": "Pizza",
+    "platouri": "Platouri",
+    "feluri-principale": "Feluri principale",
+    "gustari": "Gustări",
+    "deserturi": "Deserturi",
+    "combo": "Combo",
+    "seturi": "Seturi",
+    "rulouri": "Rulouri",
+    "cartofi": "Cartofi"
   }
 }
