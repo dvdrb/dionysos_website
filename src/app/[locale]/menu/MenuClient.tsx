@@ -147,7 +147,7 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
   const [headerOffset, setHeaderOffset] = useState<number>(0);
   const [navHeight, setNavHeight] = useState<number>(0);
   const [deferRest, setDeferRest] = useState(false);
-  const navRef = useRef<HTMLDivElement | null>(null);
+  const navRef = useRef<HTMLDivElement>(null!);
   const [lastTargetId, setLastTargetId] = useState<string | null>(null);
 
   // Defer rendering of below-the-fold sections to after idle to improve LCP
