@@ -91,7 +91,12 @@ type MenuSectionProps = {
   sectionIndex: number;
   scrollMarginTop: number;
 };
-const MenuSection = ({ id, items, sectionIndex, scrollMarginTop }: MenuSectionProps) => {
+const MenuSection = ({
+  id,
+  items,
+  sectionIndex,
+  scrollMarginTop,
+}: MenuSectionProps) => {
   return (
     <section
       id={id}
@@ -112,7 +117,7 @@ const MenuSection = ({ id, items, sectionIndex, scrollMarginTop }: MenuSectionPr
                 src={src}
                 alt={item.alt_text ?? ""}
                 loading={isPriority ? "eager" : "lazy"}
-                fetchPriority={isPriority ? "high" as any : undefined}
+                fetchPriority={isPriority ? ("high" as any) : undefined}
                 decoding="async"
                 sizes="(max-width: 1024px) 100vw, 900px"
                 className="block w-full max-w-3xl select-none"
@@ -193,7 +198,8 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const el = navRef.current;
-    const update = () => setNavHeight(el instanceof HTMLElement ? el.offsetHeight : 0);
+    const update = () =>
+      setNavHeight(el instanceof HTMLElement ? el.offsetHeight : 0);
     update();
     let ro: ResizeObserver | null = null;
     if (el instanceof HTMLElement && "ResizeObserver" in window) {
@@ -235,7 +241,10 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
     };
   }, [navCategories]);
 
-  const scrollToCategoryId = (id: string, behavior: ScrollBehavior = "smooth") => {
+  const scrollToCategoryId = (
+    id: string,
+    behavior: ScrollBehavior = "smooth"
+  ) => {
     const el = document.getElementById(id);
     if (!el) return false;
     // Use scrollIntoView with CSS scroll-margin-top; avoids sticky nav mid-scroll shifts
@@ -263,7 +272,9 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
         try {
           const targetIndex = sections.findIndex((s) => s.id === categoryId);
           if (targetIndex >= 0) {
-            const idsToWatch = sections.slice(0, targetIndex + 1).map((s) => s.id);
+            const idsToWatch = sections
+              .slice(0, targetIndex + 1)
+              .map((s) => s.id);
             const seen = new WeakSet<EventTarget>();
             idsToWatch.forEach((id) => {
               const sec = document.getElementById(id);
@@ -314,7 +325,9 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
       try {
         const targetIndex = sections.findIndex((s) => s.id === hash);
         if (targetIndex >= 0) {
-          const idsToWatch = sections.slice(0, targetIndex + 1).map((s) => s.id);
+          const idsToWatch = sections
+            .slice(0, targetIndex + 1)
+            .map((s) => s.id);
           const seen = new WeakSet<EventTarget>();
           idsToWatch.forEach((id) => {
             const sec = document.getElementById(id);
@@ -382,7 +395,11 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
     <div className="bg-[#1a1a1a] min-h-screen font-sans">
       <Head>
         {sections?.[0]?.items?.[0]?.image_url && (
-          <link rel="preload" as="image" href={optimizeUrl(sections[0].items[0].image_url)} />
+          <link
+            rel="preload"
+            as="image"
+            href={optimizeUrl(sections[0].items[0].image_url)}
+          />
         )}
       </Head>
       {/* JSON-LD: Breadcrumbs + Menu schema */}
@@ -402,7 +419,10 @@ export default function MenuClient({ sections }: { sections: SectionType[] }) {
           <React.Fragment key={section.id}>
             <MenuSection
               id={section.id}
-              items={section.items.map((it) => ({ ...it, image_url: optimizeUrl(it.image_url) }))}
+              items={section.items.map((it) => ({
+                ...it,
+                image_url: optimizeUrl(it.image_url),
+              }))}
               sectionIndex={index}
               scrollMarginTop={headerOffset + navHeight + 8}
             />

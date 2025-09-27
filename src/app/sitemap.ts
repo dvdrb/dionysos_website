@@ -11,7 +11,7 @@ const menus = [
 ] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const site = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
+  const site = process.env.NEXT_PUBLIC_SITE_URL || "https://dionysos.md";
   const paths = ["", "/menu", ...menus.map((m) => `/menu/${m}`)];
 
   const entries: MetadataRoute.Sitemap = [];
