@@ -32,6 +32,8 @@ export async function POST(request: Request) {
     "sushi",
     "sushi-restaurant",
     "sushi-restaurant-sushi",
+    "sushi-restaurant-burger-kebab",
+    "sushi-restaurant-fries",
   ]);
 
   // Prefer ro as base name if available
@@ -45,7 +47,7 @@ export async function POST(request: Request) {
 
   if (menu && !ALLOWED_MENUS.has(menu)) {
     return NextResponse.json(
-      { message: "Invalid menu. Allowed: taverna, bar, sushi, sushi-restaurant, sushi-restaurant-sushi" },
+      { message: "Invalid menu. Allowed: taverna, bar, sushi, sushi-restaurant, sushi-restaurant-sushi, sushi-restaurant-burger-kebab, sushi-restaurant-fries" },
       { status: 400 }
     );
   }

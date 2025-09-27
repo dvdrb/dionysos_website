@@ -21,9 +21,11 @@
     },
     "modal": {
       "bar": "Bar",
-      "taverna": "Meniu Taverna",
+      "taverna": "Meniu Bucate",
       "sushi": "Meniu Sushi",
-      "sushi_restaurant": "Meniu Restaurant"
+      "sushi_restaurant": "Meniu Restaurant",
+      "sushi_restaurant_burger_kebab": "Burger/Kebab",
+      "sushi_restaurant_fries": "Cartofi pai"
     },
     "brand": {
       "taverna": "Dionysos Taverna",
@@ -62,10 +64,11 @@
       "gallery": "Galerie"
     },
     "menus": {
-      "taverna": "Taverna (Dionysos Taverna)",
+      "taverna": "Bucate (Dionysos Taverna)",
       "bar": "Bar (Dionysos Taverna)",
       "sushi": "Sushi (Dionysos Taverna)",
-      "sushi_restaurant": "Meniu Restaurant (Dionysos Sushi)",
+      "sushi_restaurant_burger_kebab": "Burger/Kebab (Dionysos Sushi)",
+      "sushi_restaurant_fries": "Cartofi pai (Dionysos Sushi)",
       "sushi_restaurant_sushi": "Sushi (Dionysos Sushi)"
     },
     "categories": {
@@ -143,6 +146,6 @@
     "combo": "Combo",
     "seturi": "Seturi",
     "rulouri": "Rulouri",
-    "cartofi": "Cartofi"
+    "cartofi": "Cartofi pai"
   }
 }

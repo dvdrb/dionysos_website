@@ -21,9 +21,11 @@
     },
     "modal": {
       "bar": "Бар",
-      "taverna": "Меню таверны",
+      "taverna": "Меню блюд",
       "sushi": "Суши меню",
-      "sushi_restaurant": "Меню ресторана"
+      "sushi_restaurant": "Меню ресторана",
+      "sushi_restaurant_burger_kebab": "Бургеры/Кебаб",
+      "sushi_restaurant_fries": "Картофель фри"
     },
     "brand": {
       "taverna": "Dionysos Taverna",
@@ -65,10 +67,11 @@
       "gallery": "Галерея"
     },
     "menus": {
-      "taverna": "Таверна (Dionysos Taverna)",
+      "taverna": "Блюда (Dionysos Taverna)",
       "bar": "Бар (Dionysos Taverna)",
       "sushi": "Суши (Dionysos Taverna)",
-      "sushi_restaurant": "Меню ресторана (Dionysos Sushi)",
+      "sushi_restaurant_burger_kebab": "Бургеры/Кебаб (Dionysos Sushi)",
+      "sushi_restaurant_fries": "Картофель фри (Dionysos Sushi)",
       "sushi_restaurant_sushi": "Суши (Dionysos Sushi)"
     },
     "categories": {

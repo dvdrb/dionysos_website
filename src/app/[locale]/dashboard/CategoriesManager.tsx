@@ -31,7 +31,8 @@ export default function CategoriesManager({
     { id: "taverna", label: t("menus.taverna") },
     { id: "bar", label: t("menus.bar") },
     { id: "sushi", label: t("menus.sushi") },
-    { id: "sushi-restaurant", label: t("menus.sushi_restaurant") },
+    { id: "sushi-restaurant-burger-kebab", label: t("menus.sushi_restaurant_burger_kebab") },
+    { id: "sushi-restaurant-fries", label: t("menus.sushi_restaurant_fries") },
     { id: "sushi-restaurant-sushi", label: t("menus.sushi_restaurant_sushi") },
   ] as const;
   const [menu, setMenu] = useState<string>(selectedMenu);

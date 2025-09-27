@@ -21,9 +21,11 @@
     },
     "modal": {
       "bar": "Bar",
-      "taverna": "Taverna Menu",
+      "taverna": "Dishes Menu",
       "sushi": "Sushi Menu",
-      "sushi_restaurant": "Restaurant Menu"
+      "sushi_restaurant": "Restaurant Menu",
+      "sushi_restaurant_burger_kebab": "Burger/Kebab",
+      "sushi_restaurant_fries": "French fries"
     },
     "brand": {
       "taverna": "Dionysos Taverna",
@@ -65,10 +67,11 @@
       "gallery": "Gallery"
     },
     "menus": {
-      "taverna": "Taverna (Dionysos Taverna)",
+      "taverna": "Dishes (Dionysos Taverna)",
       "bar": "Bar (Dionysos Taverna)",
       "sushi": "Sushi (Dionysos Taverna)",
-      "sushi_restaurant": "Restaurant Menu (Dionysos Sushi)",
+      "sushi_restaurant_burger_kebab": "Burger/Kebab (Dionysos Sushi)",
+      "sushi_restaurant_fries": "French fries (Dionysos Sushi)",
       "sushi_restaurant_sushi": "Sushi (Dionysos Sushi)"
     },
     "categories": {
@@ -145,6 +148,6 @@
     "combo": "Combo",
     "seturi": "Sets",
     "rulouri": "Rolls",
-    "cartofi": "Potatoes"
+    "cartofi": "French fries"
   }
 }

@@ -5,8 +5,9 @@ const menus = [
   "taverna",
   "bar",
   "sushi",
-  "sushi-restaurant",
   "sushi-restaurant-sushi",
+  "sushi-restaurant-burger-kebab",
+  "sushi-restaurant-fries",
 ] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {

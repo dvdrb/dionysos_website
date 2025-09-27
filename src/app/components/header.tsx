@@ -171,7 +171,7 @@ const Header = () => {
 
   const isSushiPage = useMemo(() => {
     const p = pathname || "";
-    return /^(?:\/(ro|ru|en))\/menu\/(sushi|sushi-restaurant|sushi-restaurant-sushi)(?:\/|$)/.test(
+    return /^(?:\/(ro|ru|en))\/menu\/(sushi|sushi-restaurant|sushi-restaurant-sushi|sushi-restaurant-burger-kebab|sushi-restaurant-fries)(?:\/|$)/.test(
       p
     );
   }, [pathname]);
@@ -252,9 +252,14 @@ const Header = () => {
         imgSrc: "/icon_sushi.svg",
       },
       {
-        name: t("modal.sushi_restaurant"),
-        href: `/${locale}/menu/sushi-restaurant`,
-        imgSrc: "/icon_taverna.svg",
+        name: t("modal.sushi_restaurant_burger_kebab"),
+        href: `/${locale}/menu/sushi-restaurant-burger-kebab`,
+        imgSrc: "/icon_burger.png",
+      },
+      {
+        name: t("modal.sushi_restaurant_fries"),
+        href: `/${locale}/menu/sushi-restaurant-fries`,
+        imgSrc: "/icon-fries.webp",
       },
     ];
   }, [locale, t]);

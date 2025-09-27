@@ -10,8 +10,9 @@ const MENUS = [
   "taverna",
   "bar",
   "sushi",
-  "sushi-restaurant",
   "sushi-restaurant-sushi",
+  "sushi-restaurant-burger-kebab",
+  "sushi-restaurant-fries",
 ] as const;
 type MenuSlug = (typeof MENUS)[number];
 
@@ -259,7 +260,7 @@ export async function generateMetadata({
   const { locale = "ro", menu: rawMenu = "taverna" } = await params;
   const menu = rawMenu as string;
   const menuNames: Record<string, { ro: string; ru: string; en: string }> = {
-    taverna: { ro: "Meniu Taverna", ru: "Меню таверны", en: "Taverna Menu" },
+    taverna: { ro: "Meniu Bucate", ru: "Меню блюд", en: "Dishes Menu" },
     bar: { ro: "Bar", ru: "Бар", en: "Bar" },
     sushi: { ro: "Meniu Sushi", ru: "Суши меню", en: "Sushi Menu" },
     "sushi-restaurant": {
@@ -271,6 +272,16 @@ export async function generateMetadata({
       ro: "Meniu Sushi (Restaurant)",
       ru: "Суши меню (Ресторан)",
       en: "Sushi Menu (Restaurant)",
+    },
+    "sushi-restaurant-burger-kebab": {
+      ro: "Burger/Kebab",
+      ru: "Бургеры/Кебаб",
+      en: "Burger/Kebab",
+    },
+    "sushi-restaurant-fries": {
+      ro: "Cartofi pai",
+      ru: "Картофель фри",
+      en: "French fries",
     },
   };
   const title = menuNames[menu]?.[locale as "ro" | "ru" | "en"] || menu;

@@ -130,7 +130,11 @@ export default function HomePageClient({
     if (!activeMenuModal) return;
     const targets =
       activeMenuModal === "sushi"
-        ? [`/${locale}/menu/sushi-restaurant-sushi`, `/${locale}/menu/sushi-restaurant`]
+        ? [
+            `/${locale}/menu/sushi-restaurant-sushi`,
+            `/${locale}/menu/sushi-restaurant-burger-kebab`,
+            `/${locale}/menu/sushi-restaurant-fries`,
+          ]
         : [`/${locale}/menu/taverna`, `/${locale}/menu/bar`, `/${locale}/menu/sushi`];
     for (const href of targets) {
       try {
@@ -228,8 +232,13 @@ export default function HomePageClient({
                       />
                       <MenuCategoryButton
                         icon={tavernaIcon}
-                        label={t("modal.sushi_restaurant")}
-                        href={`/${locale}/menu/sushi-restaurant`}
+                        label={t("modal.sushi_restaurant_burger_kebab")}
+                        href={`/${locale}/menu/sushi-restaurant-burger-kebab`}
+                      />
+                      <MenuCategoryButton
+                        icon={tavernaIcon}
+                        label={t("modal.sushi_restaurant_fries")}
+                        href={`/${locale}/menu/sushi-restaurant-fries`}
                       />
                     </>
                   )}
