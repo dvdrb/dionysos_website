@@ -50,8 +50,11 @@ export const metadata: Metadata = {
     images: ["/dionysos_logo.png"],
   },
   icons: {
-    icon: "/dionysos_logo.png",
-    shortcut: "/dionysos_logo.png",
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/dionysos_logo.png" },
+    ],
+    shortcut: "/favicon.svg",
     apple: "/dionysos_logo.png",
   },
   alternates: {
