@@ -13,10 +13,11 @@ function detectLocale(req: NextRequest): AppLocale {
   }
 
   // 2) Basic Accept-Language detection (very simple)
+  // Prefer Romanian, then Russian, then English
   const header = req.headers.get("accept-language") || "";
-  if (/\ben\b/i.test(header)) return "en";
-  if (/\bru\b/i.test(header)) return "ru";
   if (/\bro\b/i.test(header)) return "ro";
+  if (/\bru\b/i.test(header)) return "ru";
+  if (/\ben\b/i.test(header)) return "en";
 
   // 3) Fallback
   return "ro";

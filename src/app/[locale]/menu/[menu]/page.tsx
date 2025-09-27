@@ -261,7 +261,7 @@ export async function generateMetadata({
   const menu = rawMenu as string;
   const menuNames: Record<string, { ro: string; ru: string; en: string }> = {
     taverna: { ro: "Meniu Bucate", ru: "Меню блюд", en: "Dishes Menu" },
-    bar: { ro: "Bar", ru: "Бар", en: "Bar" },
+    bar: { ro: "Meniu Băuturi", ru: "Меню напитков", en: "Drinks Menu" },
     sushi: { ro: "Meniu Sushi", ru: "Суши меню", en: "Sushi Menu" },
     "sushi-restaurant": {
       ro: "Meniu Restaurant Sushi",
@@ -269,9 +269,9 @@ export async function generateMetadata({
       en: "Sushi Restaurant Menu",
     },
     "sushi-restaurant-sushi": {
-      ro: "Meniu Sushi (Restaurant)",
-      ru: "Суши меню (Ресторан)",
-      en: "Sushi Menu (Restaurant)",
+      ro: "Sushi",
+      ru: "Суши",
+      en: "Sushi",
     },
     "sushi-restaurant-burger-kebab": {
       ro: "Burger/Kebab",

@@ -20,9 +20,10 @@
       "next": "Înainte"
     },
     "modal": {
-      "bar": "Bar",
+      "bar": "Meniu Băuturi",
       "taverna": "Meniu Bucate",
-      "sushi": "Meniu Sushi",
+      "sushi": "Sushi",
+      "sushi_taverna": "Meniu Sushi",
       "sushi_restaurant": "Meniu Restaurant",
       "sushi_restaurant_burger_kebab": "Burger/Kebab",
       "sushi_restaurant_fries": "Cartofi pai"

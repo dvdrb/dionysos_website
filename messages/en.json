@@ -20,9 +20,10 @@
       "next": "Next"
     },
     "modal": {
-      "bar": "Bar",
+      "bar": "Drinks Menu",
       "taverna": "Dishes Menu",
-      "sushi": "Sushi Menu",
+      "sushi": "Sushi",
+      "sushi_taverna": "Sushi Menu",
       "sushi_restaurant": "Restaurant Menu",
       "sushi_restaurant_burger_kebab": "Burger/Kebab",
       "sushi_restaurant_fries": "French fries"

@@ -20,9 +20,10 @@
       "next": "Вперёд"
     },
     "modal": {
-      "bar": "Бар",
+      "bar": "Меню напитков",
       "taverna": "Меню блюд",
-      "sushi": "Суши меню",
+      "sushi": "Суши",
+      "sushi_taverna": "Суши меню",
       "sushi_restaurant": "Меню ресторана",
       "sushi_restaurant_burger_kebab": "Бургеры/Кебаб",
       "sushi_restaurant_fries": "Картофель фри"

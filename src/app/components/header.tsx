@@ -277,7 +277,7 @@ const Header = () => {
         imgSrc: "/icon_bar.svg",
       },
       {
-        name: t("modal.sushi"),
+        name: t("modal.sushi_taverna"),
         href: `/${locale}/menu/sushi`,
         imgSrc: "/icon_sushi.svg",
       },

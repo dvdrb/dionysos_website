@@ -219,7 +219,7 @@ export default function HomePageClient({
                       />
                       <MenuCategoryButton
                         icon={sushiIcon}
-                        label={t("modal.sushi")}
+                        label={t("modal.sushi_taverna")}
                         href={`/${locale}/menu/sushi`}
                       />
                     </>
