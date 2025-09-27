@@ -31,8 +31,8 @@
     },
     "sidebar": {
       "groups": {
-        "sushi": "Dionysos Sushi",
-        "taverna": "Dionysos Taverna"
+        "taverna": "Dionysos Taverna",
+        "sushi": "Dionysos Sushi"
       }
     }
   },

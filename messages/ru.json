@@ -31,8 +31,8 @@
     },
     "sidebar": {
       "groups": {
-        "sushi": "Ресторан Dionysos",
-        "taverna": "Таверна Dionysos"
+        "taverna": "Таверна  Dionysos",
+        "sushi": "Суши Dionysos"
       }
     }
   },
@@ -83,32 +83,48 @@
         "iconToggleHide": "Скрыть",
         "menu": "Меню"
       },
-      "icon": {"valid": "Корректная иконка", "searchPlaceholder": "Поиск иконки (напр.: pizza, beef, star)"},
-      "actions": {"add": "Добавить", "delete": "Удалить"},
-      "confirm": {"delete": "Вы уверены, что хотите удалить эту категорию? Все связанные изображения будут удалены."},
-      "alerts": {"createError": "Ошибка создания", "deleteError": "Ошибка удаления", "error": "Ошибка"}
+      "icon": {
+        "valid": "Корректная иконка",
+        "searchPlaceholder": "Поиск иконки (напр.: pizza, beef, star)"
+      },
+      "actions": { "add": "Добавить", "delete": "Удалить" },
+      "confirm": {
+        "delete": "Вы уверены, что хотите удалить эту категорию? Все связанные изображения будут удалены."
+      },
+      "alerts": {
+        "createError": "Ошибка создания",
+        "deleteError": "Ошибка удаления",
+        "error": "Ошибка"
+      }
     },
     "images": {
       "heading": "Управление изображениями меню",
-      "labels": {"category": "Категория", "upload": "Загрузить изображение"},
-      "status": {"uploading": "Загрузка..."},
-      "hints": {"selectCategory": "Выберите категорию перед загрузкой."},
-      "empty": {"noCategories": "Нет категорий для выбранного меню."},
-      "actions": {"deleteAria": "Удалить изображение", "delete": "Удалить"}
+      "labels": { "category": "Категория", "upload": "Загрузить изображение" },
+      "status": { "uploading": "Загрузка..." },
+      "hints": { "selectCategory": "Выберите категорию перед загрузкой." },
+      "empty": { "noCategories": "Нет категорий для выбранного меню." },
+      "actions": { "deleteAria": "Удалить изображение", "delete": "Удалить" }
     },
     "gallery": {
       "heading": "Управление главной галереей",
-      "labels": {"upload": "Загрузить изображение"},
-      "status": {"uploading": "Загрузка..."},
-      "actions": {"deleteAria": "Удалить изображение", "delete": "Удалить"}
+      "labels": { "upload": "Загрузить изображение" },
+      "status": { "uploading": "Загрузка..." },
+      "actions": { "deleteAria": "Удалить изображение", "delete": "Удалить" }
     },
     "promo": {
       "heading": "Управление промо-товарами",
-      "labels": {"title": "Название", "price": "Цена", "image": "Изображение"},
-      "placeholders": {"title": "напр.: Семейное ассорти", "price": "напр.: 79 лей"},
-      "actions": {"add": "Добавить", "deleteAria": "Удалить"},
-      "status": {"uploading": "Загрузка..."},
-      "confirm": {"delete": "Вы уверены?"}
+      "labels": {
+        "title": "Название",
+        "price": "Цена",
+        "image": "Изображение"
+      },
+      "placeholders": {
+        "title": "напр.: Семейное ассорти",
+        "price": "напр.: 79 лей"
+      },
+      "actions": { "add": "Добавить", "deleteAria": "Удалить" },
+      "status": { "uploading": "Загрузка..." },
+      "confirm": { "delete": "Вы уверены?" }
     }
   },
   "menu_categories": {

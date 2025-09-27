@@ -30,10 +30,7 @@
       "sushi": "Dionysos Sushi"
     },
     "sidebar": {
-      "groups": {
-        "sushi": "Restaurant Dionysos",
-        "taverna": "Taverna Dionysos"
-      }
+      "groups": { "taverna": "Dionysos Taverna", "sushi": "Dionysos Sushi" }
     }
   },
   "Footer": {
@@ -83,32 +80,45 @@
         "iconToggleHide": "Ascunde",
         "menu": "Meniu"
       },
-      "icon": {"valid": "Icon valid", "searchPlaceholder": "Caută icon (ex: pizza, beef, star)"},
-      "actions": {"add": "Adaugă", "delete": "Șterge"},
-      "confirm": {"delete": "Ești sigur că vrei să ștergi această categorie? Toate imaginile asociate vor fi șterse."},
-      "alerts": {"createError": "Eroare la creare", "deleteError": "Eroare la ștergere", "error": "Eroare"}
+      "icon": {
+        "valid": "Icon valid",
+        "searchPlaceholder": "Caută icon (ex: pizza, beef, star)"
+      },
+      "actions": { "add": "Adaugă", "delete": "Șterge" },
+      "confirm": {
+        "delete": "Ești sigur că vrei să ștergi această categorie? Toate imaginile asociate vor fi șterse."
+      },
+      "alerts": {
+        "createError": "Eroare la creare",
+        "deleteError": "Eroare la ștergere",
+        "error": "Eroare"
+      }
     },
     "images": {
       "heading": "Gestionează Imagini Meniu",
-      "labels": {"category": "Categorie", "upload": "Încarcă imagine"},
-      "status": {"uploading": "Se încarcă..."},
-      "hints": {"selectCategory": "Selectează categoria înainte de a încărca."},
-      "empty": {"noCategories": "Nu există categorii pentru meniul selectat."},
-      "actions": {"deleteAria": "Șterge imaginea", "delete": "Șterge"}
+      "labels": { "category": "Categorie", "upload": "Încarcă imagine" },
+      "status": { "uploading": "Se încarcă..." },
+      "hints": {
+        "selectCategory": "Selectează categoria înainte de a încărca."
+      },
+      "empty": {
+        "noCategories": "Nu există categorii pentru meniul selectat."
+      },
+      "actions": { "deleteAria": "Șterge imaginea", "delete": "Șterge" }
     },
     "gallery": {
       "heading": "Gestionează Galeria Principală",
-      "labels": {"upload": "Încarcă imagine"},
-      "status": {"uploading": "Se încarcă..."},
-      "actions": {"deleteAria": "Șterge imaginea", "delete": "Șterge"}
+      "labels": { "upload": "Încarcă imagine" },
+      "status": { "uploading": "Se încarcă..." },
+      "actions": { "deleteAria": "Șterge imaginea", "delete": "Șterge" }
     },
     "promo": {
       "heading": "Gestionează Produse Promo",
-      "labels": {"title": "Titlu", "price": "Preț", "image": "Imagine"},
-      "placeholders": {"title": "ex: Platou Family", "price": "ex: 79 lei"},
-      "actions": {"add": "Adaugă", "deleteAria": "Șterge"},
-      "status": {"uploading": "Se încarcă..."},
-      "confirm": {"delete": "Ești sigur?"}
+      "labels": { "title": "Titlu", "price": "Preț", "image": "Imagine" },
+      "placeholders": { "title": "ex: Platou Family", "price": "ex: 79 lei" },
+      "actions": { "add": "Adaugă", "deleteAria": "Șterge" },
+      "status": { "uploading": "Se încarcă..." },
+      "confirm": { "delete": "Ești sigur?" }
     }
   },
   "menu_categories": {

@@ -66,41 +66,9 @@ const MobileSidePanel = ({
 
         {/* Side Panel Content */}
         <div className="overflow-y-auto items-center flex flex-col h-full pb-20">
-          {/* Sushi Group */}
+          {/* Taverna Group (first) */}
           <div className="w-full">
             <div className="px-6 pt-2 pb-1 text-sm font-semibold tracking-wide text-gray-500 ">
-              {sushiTitle}
-            </div>
-            <nav className="pb-2">
-              {sushiMenuTypes.map((item, index) => (
-                <div key={`sushi-menu-${index}`}>
-                  <Link
-                    href={item.href}
-                    className="flex items-center gap-4 px-6 py-3 text-gray-800 hover:bg-gray-200 transition-colors"
-                    onClick={onClose}
-                  >
-                    {item.imgSrc ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={item.imgSrc}
-                        alt={item.name}
-                        className="w-6 h-6"
-                      />
-                    ) : item.Icon ? (
-                      <item.Icon className="w-6 h-6 text-gray-600" />
-                    ) : null}
-                    <span className="text-lg font-medium">{item.name}</span>
-                  </Link>
-                  {index < sushiMenuTypes.length - 1 && (
-                    <div className="mx-6 border-b border-gray-200" />
-                  )}
-                </div>
-              ))}
-            </nav>
-          </div>
-          {/* Taverna Group */}
-          <div className="w-full">
-            <div className="px-6 pt-4 pb-1 text-sm font-semibold tracking-wide text-gray-500 ">
               {tavernaTitle}
             </div>
             <nav className="pb-2">
@@ -124,6 +92,38 @@ const MobileSidePanel = ({
                     <span className="text-lg font-medium">{item.name}</span>
                   </Link>
                   {index < tavernaMenuTypes.length - 1 && (
+                    <div className="mx-6 border-b border-gray-200" />
+                  )}
+                </div>
+              ))}
+            </nav>
+          </div>
+          {/* Sushi Group (second) */}
+          <div className="w-full">
+            <div className="px-6 pt-4 pb-1 text-sm font-semibold tracking-wide text-gray-500 ">
+              {sushiTitle}
+            </div>
+            <nav className="pb-2">
+              {sushiMenuTypes.map((item, index) => (
+                <div key={`sushi-menu-${index}`}>
+                  <Link
+                    href={item.href}
+                    className="flex items-center gap-4 px-6 py-3 text-gray-800 hover:bg-gray-200 transition-colors"
+                    onClick={onClose}
+                  >
+                    {item.imgSrc ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={item.imgSrc}
+                        alt={item.name}
+                        className="w-6 h-6"
+                      />
+                    ) : item.Icon ? (
+                      <item.Icon className="w-6 h-6 text-gray-600" />
+                    ) : null}
+                    <span className="text-lg font-medium">{item.name}</span>
+                  </Link>
+                  {index < sushiMenuTypes.length - 1 && (
                     <div className="mx-6 border-b border-gray-200" />
                   )}
                 </div>
