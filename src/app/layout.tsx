@@ -50,12 +50,13 @@ export const metadata: Metadata = {
     images: ["/dionysos_logo.png"],
   },
   icons: {
+    // Provide multiple formats so browsers and Google Search can pick a supported one
     icon: [
+      { url: "/favicon.ico" }, // classic fallback used by crawlers
       { url: "/favicon.svg", type: "image/svg+xml" },
       { url: "/dionysos_logo.png" },
     ],
-    shortcut: "/favicon.svg",
-    apple: "/dionysos_logo.png",
+    shortcut: "/favicon.ico",
   },
   alternates: {
     canonical: "/",
